@@ -414,18 +414,18 @@ module mudroom_lockers() {
                     basket_unit(basket_w, basket_d, basket_h);
             }
             
-            // Baskets in the bottom cubbies (exactly 2 baskets total, 1 centered in each of the 2 equal compartments)
-            visible_locker_w = total_locker_width - bench_depth;
-            comp_w = visible_locker_w / 2 - plywood_thickness; // ~21.3"
-            basket_lw = 16.0; // Spacious 16" wide baskets for shoe/boot storage
+            // Baskets in the bottom cubbies (exactly 2 baskets total, centered in the 2 visible compartments)
+            visible_locker_w = total_locker_width - bench_depth; // 26.75"
+            comp_w = visible_locker_w / 2 - plywood_thickness;  // ~12.6"
+            basket_lw = 11.0; // 11" wide baskets (slide out of the visible openings)
             gap = (comp_w - basket_lw) / 2;
             
-            // Compartment 1 (left)
+            // Compartment 1 (left visible bay)
             translate([plywood_thickness + gap, 0.5, plywood_thickness])
                 basket_unit(basket_lw, basket_d, 10);
                 
-            // Compartment 2 (middle)
-            comp2_x = total_locker_width/2 + plywood_thickness/2;
+            // Compartment 2 (right visible bay)
+            comp2_x = visible_locker_w / 2 + plywood_thickness / 2;
             translate([comp2_x + gap, 0.5, plywood_thickness])
                 basket_unit(basket_lw, basket_d, 10);
         }
