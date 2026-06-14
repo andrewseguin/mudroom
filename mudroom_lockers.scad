@@ -411,22 +411,7 @@ scale(inch) {
     // Platforms
     if (show_platforms) room_base_platforms();
     
-    // North Door
-    door_unit(
-        wall_y          = east_wall_length,
-        is_north        = true,
-        door_from_east  = north_door_from_east,
-        width           = north_door_width,
-        height          = north_door_height,
-        thickness       = north_door_thickness,
-        swing_angle     = north_door_swing_angle,
-        hinge_east      = north_door_hinge_east,
-        opens_inward    = north_door_opens_inward,
-        trim_width      = north_door_trim_width,
-        trim_thick      = north_door_trim_thick,
-        show_slab       = show_doors,
-        show_swing      = show_door_swing
-    );
+    
     
     room_windows();
     
