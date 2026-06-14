@@ -33,11 +33,11 @@ transom_top_height    = 96;
 transom_height        = transom_top_height - transom_bottom_height;
 
 // --- East Window Parameters (Inches) ---
-east_window_width         = 41;
+east_window_width         = 42; // Same size as opposing window
 east_window_bottom_height = 30;
 east_window_top_height    = 96;
 east_window_height        = east_window_top_height - east_window_bottom_height;
-east_window_from_north    = 0; // Ends/starts near North wall
+east_window_from_north    = 2; // 2 inches away from North wall
 
 // --- Visualization Toggles ---
 show_walls       = true;
