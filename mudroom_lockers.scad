@@ -325,9 +325,16 @@ module mudroom_lockers() {
         // 1. Vertical upright side panels and middle dividers (resting on platform)
         for (i = [0 : locker_num_bays]) {
             x_pos = i * (locker_bay_width + plywood_thickness);
+            
+            // To make the South-East corner accessible underneath the bench,
+            // dividers near the corner (3 and 4) stop at the benchtop (world Z = 18")
+            starts_at_bench = (i == 3 || (locker_num_bays == 4 && i == 4));
+            z_start = starts_at_bench ? (locker_bench_height - base_platform_height) : 0;
+            z_height = locker_height - base_platform_height - z_start;
+            
             color(color_cabinet)
-            translate([x_pos, 0, 0])
-                cube([plywood_thickness, locker_depth, locker_height - base_platform_height]);
+            translate([x_pos, 0, z_start])
+                cube([plywood_thickness, locker_depth, z_height]);
         }
         
         // 2. Top roof panel
