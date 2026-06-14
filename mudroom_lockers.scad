@@ -98,7 +98,7 @@ color_door_swing   = [0.95, 0.45, 0.45, 0.2]; // Semi-transparent red clearance 
 color_window_glass = [0.65, 0.85, 0.95, 0.4]; // Semi-transparent glass blue
 color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
 color_cabinet      = [0.15, 0.28, 0.22, 1.0]; // Rich dark forest green painted finish
-color_hook         = [0.20, 0.20, 0.20, 1.0]; // Oil rubbed bronze hooks
+color_hook         = [0.65, 0.50, 0.30, 1.0]; // Warm metallic bronze hooks
 color_platform     = [0.22, 0.22, 0.22, 1.0]; // Charcoal/dark slate toe kick wrapper
 color_basket       = [0.15, 0.15, 0.15, 1.0]; // Sleek matte black/dark charcoal baskets
 
