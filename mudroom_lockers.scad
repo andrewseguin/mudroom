@@ -17,7 +17,7 @@ door_from_east   = 53;
 door_width       = 36;
 door_height      = 80;
 door_thickness   = 1.75;
-door_swing_angle = 90; // 0 = closed, 90 = fully open inward
+door_swing_angle = 0; // 0 = closed, 90 = fully open inward
 door_hinge_east  = true; // true = hinge on the east side, false = west side
 
 // --- Window Parameters (Inches) ---
