@@ -32,13 +32,21 @@ transom_bottom_height = 82; // 2 inches header gap above the 80" door
 transom_top_height    = 96;
 transom_height        = transom_top_height - transom_bottom_height;
 
+// --- East Window Parameters (Inches) ---
+east_window_width         = 41;
+east_window_bottom_height = 30;
+east_window_top_height    = 96;
+east_window_height        = east_window_top_height - east_window_bottom_height;
+east_window_from_north    = 0; // Ends/starts near North wall
+
 // --- Visualization Toggles ---
-show_walls      = true;
-show_floor      = true;
-show_door       = true;
-show_window     = true;
-show_transom    = true;
-show_door_swing = true; // Shows the door's opening path/clearance zone on the floor
+show_walls       = true;
+show_floor       = true;
+show_door        = true;
+show_window      = true;
+show_transom     = true;
+show_door_swing  = true; // Shows the door's opening path/clearance zone on the floor
+show_east_window = true;
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
@@ -75,9 +83,16 @@ module room_walls() {
         cube([south_wall_length + wall_thickness, wall_thickness, wall_height]);
 
     // East Wall: X from 108 to 108 + thickness, Y from 0 to 71
+    // Cuts the East window opening
     color(color_wall)
-    translate([north_wall_length, 0, 0])
-        cube([wall_thickness, east_wall_length, wall_height]);
+    difference() {
+        translate([north_wall_length, 0, 0])
+            cube([wall_thickness, east_wall_length, wall_height]);
+        
+        // East window opening cut
+        translate([north_wall_length - 0.5, east_wall_length - east_window_from_north - east_window_width, east_window_bottom_height])
+            cube([wall_thickness + 1, east_window_width, east_window_height]);
+    }
 }
 
 module room_floor() {
@@ -169,13 +184,21 @@ module room_transom() {
     window_unit(transom_x, east_wall_length, transom_bottom_height, door_width, transom_height);
 }
 
+module room_east_window() {
+    // East wall is at X = 108. Translate and rotate to align local axes
+    translate([north_wall_length, 0, 0])
+    rotate([0, 0, 90])
+        window_unit(east_wall_length - east_window_from_north - east_window_width, -wall_thickness, east_window_bottom_height, east_window_width, east_window_height);
+}
+
 // --- Render Room ---
 scale(inch) {
-    if (show_walls)      room_walls();
-    if (show_floor)      room_floor();
-    if (show_door)       room_door();
-    if (show_door_swing) room_door_swing();
-    if (show_window)     room_window();
-    if (show_transom)    room_transom();
+    if (show_walls)       room_walls();
+    if (show_floor)       room_floor();
+    if (show_door)        room_door();
+    if (show_door_swing)  room_door_swing();
+    if (show_window)      room_window();
+    if (show_transom)     room_transom();
+    if (show_east_window) room_east_window();
 }
 
