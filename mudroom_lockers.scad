@@ -92,7 +92,8 @@ show_baskets     = true;  // Renders woven rattan baskets inside the cubbies
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
-color_floor        = [0.82, 0.68, 0.48, 1.0]; // Natural honey wood tone (used for floor & benchtops)
+color_floor        = [0.36, 0.24, 0.14, 1.0]; // Dark brown floor (walnut/oak stain)
+color_bench_top    = [0.82, 0.68, 0.48, 1.0]; // Natural honey wood tone for benchtops
 color_door         = [0.75, 0.55, 0.40, 0.8]; // Semi-transparent wood tone
 color_door_swing   = [0.95, 0.45, 0.45, 0.2]; // Semi-transparent red clearance zone
 color_window_glass = [0.65, 0.85, 0.95, 0.4]; // Semi-transparent glass blue
@@ -385,7 +386,7 @@ module mudroom_lockers() {
             
         // 4. Stained solid wood bench top (1.5" thick with 0.5" overhang in Y, positioned at world Z = 18")
         // Overlap covering the backing panel top edge
-        color(color_floor)
+        color(color_bench_top)
         translate([0, 0, locker_bench_height - base_platform_height - bench_top_thickness])
             cube([total_locker_width, locker_depth + 0.5, bench_top_thickness]);
             
@@ -471,7 +472,7 @@ module mudroom_benches() {
 
     // 1. North Wall Bench (X: 59 to 108, Y: 53 to 71)
     // Wood bench top (butts into East wall corner at world Z = 18")
-    color(color_floor)
+    color(color_bench_top)
     translate([59, east_wall_length - bench_depth, bench_height - bench_top_thickness])
         cube([49, bench_depth, bench_top_thickness]);
         
@@ -493,7 +494,7 @@ module mudroom_benches() {
     
     // 2. East Wall Bench (X: 90 to 108, Y: 18 to 53)
     // Wood bench top
-    color(color_floor)
+    color(color_bench_top)
     translate([north_wall_length - bench_depth, 18, bench_height - bench_top_thickness])
         cube([bench_depth, 35, bench_top_thickness]);
         
