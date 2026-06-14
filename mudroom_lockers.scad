@@ -63,12 +63,12 @@ east_window_from_north    = 2; // 2 inches away from North wall
 
 // --- Locker Parameters (Inches) ---
 locker_num_bays     = 4;    // 4 bays for 4 kids
-locker_bay_width    = 10.25;   // Interior width of each bay (backpacks hang sideways)
+locker_bay_width    = 10.25; // Interior width of each bay (staying clear of door trim)
 locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
 locker_upper_height = 12;   // Height of top cubby bins (12" from the top)
-locker_hook_height  = 56;   // Height of hooks from the floor (child-friendly)
+locker_hook_height  = 50;   // Height of hooks from the floor (lower for kids)
 
 // --- Bench Parameters (Inches) ---
 bench_depth  = 18;
@@ -88,6 +88,7 @@ show_lockers     = true;  // Renders the South wall locker cabinet unit
 show_benches     = true;  // Renders the North & East wall L-shaped benches
 show_platforms   = true;  // Renders the 2x4 base platforms
 show_glass       = false; // Set to false to hide glass panes if preview transparency blocks your view
+show_baskets     = true;  // Renders woven rattan baskets inside the cubbies
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
@@ -99,10 +100,10 @@ color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
 color_cabinet      = [0.90, 0.90, 0.90, 1.0]; // Light grey painted cabinet finish
 color_hook         = [0.20, 0.20, 0.20, 1.0]; // Oil rubbed bronze hooks
 color_platform     = [0.22, 0.22, 0.22, 1.0]; // Charcoal/dark slate toe kick wrapper
+color_basket       = [0.82, 0.70, 0.54, 1.0]; // Natural rattan/wicker color
 
 module room_walls() {
     // North Wall: X from 0 to 108 + thickness, Y from 71 to 71 + thickness
-    // Cuts the back entrance door, main window, and transom window openings
     if (show_north_wall) {
         color(color_wall)
         difference() {
@@ -128,7 +129,6 @@ module room_walls() {
     }
 
     // South Wall: X from 0 to 108 + thickness, Y from -thickness to 0
-    // Cuts the South door opening
     if (show_south_wall) {
         color(color_wall)
         difference() {
@@ -142,7 +142,6 @@ module room_walls() {
     }
 
     // East Wall: X from 108 to 108 + thickness, Y from 0 to 71
-    // Cuts the East window opening
     if (show_east_wall) {
         color(color_wall)
         difference() {
@@ -292,6 +291,22 @@ module draw_hook() {
     }
 }
 
+// Reusable Basket/Bin Component
+module basket_unit(w, d, h) {
+    color(color_basket) {
+        difference() {
+            // Main basket box
+            cube([w, d, h]);
+            // Hollow interior
+            translate([0.5, 0.5, 0.5])
+                cube([w - 1, d - 1, h]);
+            // Front handle slot (centered on the Y = d face)
+            translate([w/2 - 1.5, d - 0.75, h - 3.5])
+                cube([3, 1.0, 1.25]);
+        }
+    }
+}
+
 module room_base_platforms() {
     total_locker_width = locker_num_bays * locker_bay_width + (locker_num_bays + 1) * plywood_thickness;
 
@@ -350,7 +365,6 @@ module mudroom_lockers() {
         translate([0, 0, 0])
             cube([total_locker_width, locker_depth, plywood_thickness]);
             
-        
         // 6. Under-bench vertical support panels (spaced to bisect the floor space)
         // Splitting the 45" wide carcass into two equal-width compartments below the bench (21.3" interior each)
         support_h = locker_bench_height - base_platform_height - bench_top_thickness - plywood_thickness; // 12.25"
@@ -360,10 +374,9 @@ module mudroom_lockers() {
         translate([0, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
             
-        // Middle bisecting support panel (bisects the visible floor opening: total width minus corner bench depth)
-        visible_locker_w = total_locker_width - bench_depth;
+        // Middle bisecting support panel (centered under the bench)
         color(color_cabinet)
-        translate([visible_locker_w / 2 - plywood_thickness / 2, 0, plywood_thickness])
+        translate([total_locker_width/2 - plywood_thickness/2, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
             
         // Right outer support panel (flush against East wall at X = total_locker_width - thickness)
@@ -371,9 +384,8 @@ module mudroom_lockers() {
         translate([total_locker_width - plywood_thickness, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
         
-        
         // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf)
-        hook_z = locker_height - base_platform_height - locker_upper_height - plywood_thickness - 6;
+        hook_z = locker_hook_height - base_platform_height;
         for (i = [0 : locker_num_bays - 1]) {
             left_wall_x = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
             right_wall_x = (i + 1) * (locker_bay_width + plywood_thickness);
@@ -387,6 +399,38 @@ module mudroom_lockers() {
             translate([right_wall_x, locker_depth / 2, hook_z])
                 rotate([0, 0, 90])
                 draw_hook();
+        }
+        
+        // 8. Baskets (if toggled on)
+        if (show_baskets) {
+            basket_w = locker_bay_width - 1.0; // ~9.25" wide
+            basket_d = locker_depth - 1.0;     // ~17" deep
+            basket_h = locker_upper_height - 2.0; // ~10" tall
+            
+            // Baskets in the top cubbies (1 in each of the 4 bays)
+            for (i = [0 : locker_num_bays - 1]) {
+                x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness + (locker_bay_width - basket_w)/2;
+                translate([x_pos, 0.5, locker_height - base_platform_height - locker_upper_height])
+                    basket_unit(basket_w, basket_d, basket_h);
+            }
+            
+            // Baskets in the bottom cubbies (2 in each of the 2 equal-width compartments)
+            visible_locker_w = total_locker_width - bench_depth;
+            comp_w = visible_locker_w / 2 - plywood_thickness; // ~21.3"
+            basket_lw = (comp_w - 1.5) / 2; // ~9.9" wide basket
+            
+            // Compartment 1 (left)
+            translate([plywood_thickness + (comp_w - 2*basket_lw)/3, 0.5, plywood_thickness])
+                basket_unit(basket_lw, basket_d, 10);
+            translate([plywood_thickness + 2*(comp_w - 2*basket_lw)/3 + basket_lw, 0.5, plywood_thickness])
+                basket_unit(basket_lw, basket_d, 10);
+                
+            // Compartment 2 (middle)
+            comp2_x = total_locker_width/2 + plywood_thickness/2;
+            translate([comp2_x + (comp_w - 2*basket_lw)/3, 0.5, plywood_thickness])
+                basket_unit(basket_lw, basket_d, 10);
+            translate([comp2_x + 2*(comp_w - 2*basket_lw)/3 + basket_lw, 0.5, plywood_thickness])
+                basket_unit(basket_lw, basket_d, 10);
         }
     }
 }
@@ -453,6 +497,45 @@ module mudroom_benches() {
         // South-East corner pillar (between lockers and East bench)
         translate([90, 18 - 2, base_platform_height])
             cube([2, 2, bench_height - base_platform_height - bench_top_thickness]);
+    }
+    
+    // 4. Baskets inside benches (if toggled on)
+    if (show_baskets) {
+        // North Bench Baskets
+        // Left compartment: X = 59.75 to 74.125 (width 14.375"). Hand facing South (Y-minus).
+        basket_n1_w = 13.0;
+        basket_n_d  = bench_depth - 1.0; // 17"
+        translate([59.75 + basket_n1_w + (14.375 - basket_n1_w)/2, east_wall_length - bench_depth + 0.5 + basket_n_d, base_platform_height + plywood_thickness])
+            rotate([0, 0, 180])
+            basket_unit(basket_n1_w, basket_n_d, 10);
+            
+        // Right visible compartment: X = 74.875 to 90 (width 15.125"). Hand facing South (Y-minus).
+        basket_n2_w = 13.5;
+        translate([74.875 + basket_n2_w + (15.125 - basket_n2_w)/2, east_wall_length - bench_depth + 0.5 + basket_n_d, base_platform_height + plywood_thickness])
+            rotate([0, 0, 180])
+            basket_unit(basket_n2_w, basket_n_d, 10);
+            
+        // East Bench Baskets (1 basket per compartment, facing West, i.e., rotated 90 deg around Z)
+        basket_ew = 9.5;
+        basket_e_d = bench_depth - 1.0; // 17"
+        
+        // Compartment 1: Y = 18 to y_pos_1
+        y_center_1 = 18 + (east_bay_w - basket_ew)/2;
+        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_1, base_platform_height + plywood_thickness])
+            rotate([0, 0, 90])
+            basket_unit(basket_ew, basket_e_d, 10);
+            
+        // Compartment 2: y_pos_1 to y_pos_2
+        y_center_2 = y_pos_1 + plywood_thickness/2 + (east_bay_w - basket_ew)/2;
+        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_2, base_platform_height + plywood_thickness])
+            rotate([0, 0, 90])
+            basket_unit(basket_ew, basket_e_d, 10);
+            
+        // Compartment 3: y_pos_2 to 53
+        y_center_3 = y_pos_2 + plywood_thickness/2 + (east_bay_w - basket_ew)/2;
+        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_3, base_platform_height + plywood_thickness])
+            rotate([0, 0, 90])
+            basket_unit(basket_ew, basket_e_d, 10);
     }
 }
 
