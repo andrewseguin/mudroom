@@ -63,29 +63,30 @@ east_window_from_north    = 2; // 2 inches away from North wall
 
 // --- Locker Parameters (Inches) ---
 locker_num_bays     = 3;    // 3 bays (kids share hooks/bays)
-locker_bay_width    = 14;   // Interior width of each bay (backpacks hang sideways)
+locker_bay_width    = 14;   // Interior width of each bay (staying clear of door trim)
 locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
 locker_upper_height = 12;   // Height of top cubby bins (12" from the top)
 locker_hook_height  = 56;   // Height of hooks from the floor (child-friendly)
-locker_shoe_height  = 8;    // Under-bench shoe shelf spacing
 
 // --- Bench Parameters (Inches) ---
 bench_depth  = 18;
 bench_height = 18;
 
 // --- Visualization Toggles ---
-show_walls       = true;
+show_north_wall  = true;  // Set to false to hide North wall and see interior easily
+show_south_wall  = true;  // Set to false to hide South wall
+show_east_wall   = true;  // Set to false to hide East wall
 show_floor       = true;
 show_doors       = true;
-show_door_swing  = true; // Shows the door's opening path/clearance zone on the floor
+show_door_swing  = true;  // Shows the door's opening path/clearance zone on the floor
 show_windows     = true;
 show_transom     = true;
 show_east_window = true;
-show_lockers     = true; // Renders the South wall locker cabinet unit
-show_benches     = true; // Renders the North & East wall L-shaped benches
-show_platforms   = true; // Renders the 2x4 base platforms
+show_lockers     = true;  // Renders the South wall locker cabinet unit
+show_benches     = true;  // Renders the North & East wall L-shaped benches
+show_platforms   = true;  // Renders the 2x4 base platforms
 show_glass       = false; // Set to false to hide glass panes if preview transparency blocks your view
 
 // --- Colors ---
@@ -102,46 +103,58 @@ color_platform     = [0.22, 0.22, 0.22, 1.0]; // Charcoal/dark slate toe kick wr
 module room_walls() {
     // North Wall: X from 0 to 108 + thickness, Y from 71 to 71 + thickness
     // Cuts the back entrance door, main window, and transom window openings
-    color(color_wall)
-    difference() {
-        translate([0, east_wall_length, 0])
-            cube([north_wall_length + wall_thickness, wall_thickness, wall_height]);
-        
-        // North door opening cut
-        translate([north_wall_length - north_door_from_east - north_door_width, east_wall_length - 0.5, 0])
-            cube([north_door_width, wall_thickness + 1, north_door_height]);
+    if (show_north_wall) {
+        color(color_wall)
+        difference() {
+            translate([0, east_wall_length, 0])
+                cube([north_wall_length + wall_thickness, wall_thickness, wall_height]);
             
-        // North window opening cut
-        translate([north_wall_length - window_from_east - window_width, east_wall_length - 0.5, window_bottom_height])
-            cube([window_width, wall_thickness + 1, window_height]);
+            // North door opening cut
+            translate([north_wall_length - north_door_from_east - north_door_width, east_wall_length - 0.5, 0])
+                cube([north_door_width, wall_thickness + 1, north_door_height]);
+                
+            // North window opening cut
+            if (show_windows) {
+                translate([north_wall_length - window_from_east - window_width, east_wall_length - 0.5, window_bottom_height])
+                    cube([window_width, wall_thickness + 1, window_height]);
+            }
 
-        // Transom window opening cut
-        translate([north_wall_length - north_door_from_east - north_door_width, east_wall_length - 0.5, transom_bottom_height])
-            cube([north_door_width, wall_thickness + 1, transom_height]);
+            // Transom window opening cut
+            if (show_transom) {
+                translate([north_wall_length - north_door_from_east - north_door_width, east_wall_length - 0.5, transom_bottom_height])
+                    cube([north_door_width, wall_thickness + 1, transom_height]);
+            }
+        }
     }
 
     // South Wall: X from 0 to 108 + thickness, Y from -thickness to 0
     // Cuts the South door opening
-    color(color_wall)
-    difference() {
-        translate([0, -wall_thickness, 0])
-            cube([south_wall_length + wall_thickness, wall_thickness, wall_height]);
-        
-        // South door opening cut
-        translate([south_wall_length - south_door_from_east - south_door_width, -wall_thickness - 0.5, 0])
-            cube([south_door_width, wall_thickness + 1, south_door_height]);
+    if (show_south_wall) {
+        color(color_wall)
+        difference() {
+            translate([0, -wall_thickness, 0])
+                cube([south_wall_length + wall_thickness, wall_thickness, wall_height]);
+            
+            // South door opening cut
+            translate([south_wall_length - south_door_from_east - south_door_width, -wall_thickness - 0.5, 0])
+                cube([south_door_width, wall_thickness + 1, south_door_height]);
+        }
     }
 
     // East Wall: X from 108 to 108 + thickness, Y from 0 to 71
     // Cuts the East window opening
-    color(color_wall)
-    difference() {
-        translate([north_wall_length, 0, 0])
-            cube([wall_thickness, east_wall_length, wall_height]);
-        
-        // East window opening cut
-        translate([north_wall_length - 0.5, east_wall_length - east_window_from_north - east_window_width, east_window_bottom_height])
-            cube([wall_thickness + 1, east_window_width, east_window_height]);
+    if (show_east_wall) {
+        color(color_wall)
+        difference() {
+            translate([north_wall_length, 0, 0])
+                cube([wall_thickness, east_wall_length, wall_height]);
+            
+            // East window opening cut
+            if (show_east_window) {
+                translate([north_wall_length - 0.5, east_wall_length - east_window_from_north - east_window_width, east_window_bottom_height])
+                    cube([wall_thickness + 1, east_window_width, east_window_height]);
+            }
+        }
     }
 }
 
@@ -241,20 +254,20 @@ module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swi
 }
 
 module room_windows() {
-    // North Window
-    if (show_windows) {
+    // North Window (only if North wall is shown)
+    if (show_windows && show_north_wall) {
         window_x = north_wall_length - window_from_east - window_width;
         window_unit(window_x, east_wall_length, window_bottom_height, window_width, window_height);
     }
     
-    // Transom Window
-    if (show_transom) {
+    // Transom Window (only if North wall is shown)
+    if (show_transom && show_north_wall) {
         transom_x = north_wall_length - north_door_from_east - north_door_width;
         window_unit(transom_x, east_wall_length, transom_bottom_height, north_door_width, transom_height);
     }
     
-    // East Window
-    if (show_east_window) {
+    // East Window (only if East wall is shown)
+    if (show_east_window && show_east_wall) {
         translate([north_wall_length, 0, 0])
         rotate([0, 0, 90])
             window_unit(east_wall_length - east_window_from_north - east_window_width, -wall_thickness, east_window_bottom_height, east_window_width, east_window_height);
@@ -283,19 +296,25 @@ module room_base_platforms() {
     total_locker_width = locker_num_bays * locker_bay_width + (locker_num_bays + 1) * plywood_thickness;
 
     // 1. Locker Platform (South-East corner, recessed from front Y=18)
-    color(color_platform)
-    translate([north_wall_length - total_locker_width, 0, 0])
-        cube([total_locker_width, locker_depth - toe_kick_recess, base_platform_height]);
+    if (show_south_wall) {
+        color(color_platform)
+        translate([north_wall_length - total_locker_width, 0, 0])
+            cube([total_locker_width, locker_depth - toe_kick_recess, base_platform_height]);
+    }
 
     // 2. North Bench Platform (North-East wall, recessed from front Y=53)
-    color(color_platform)
-    translate([59, east_wall_length - bench_depth + toe_kick_recess, 0])
-        cube([49, bench_depth - toe_kick_recess, base_platform_height]);
+    if (show_north_wall) {
+        color(color_platform)
+        translate([59, east_wall_length - bench_depth + toe_kick_recess, 0])
+            cube([49, bench_depth - toe_kick_recess, base_platform_height]);
+    }
 
     // 3. East Bench Platform (East wall, recessed from front X=90)
-    color(color_platform)
-    translate([north_wall_length - bench_depth + toe_kick_recess, 18, 0])
-        cube([bench_depth - toe_kick_recess, 35, base_platform_height]);
+    if (show_east_wall) {
+        color(color_platform)
+        translate([north_wall_length - bench_depth + toe_kick_recess, 18, 0])
+            cube([bench_depth - toe_kick_recess, 35, base_platform_height]);
+    }
 }
 
 module mudroom_lockers() {
@@ -341,8 +360,8 @@ module mudroom_lockers() {
                 cube([plywood_thickness, locker_depth - 0.5, cubby_interior_height]);
         }
         
-        // 7. Coat hooks (side-mounted on the walls of each locker bay, relative to floor height)
-        hook_z = locker_hook_height - base_platform_height;
+        // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf)
+        hook_z = locker_height - base_platform_height - locker_upper_height - plywood_thickness - 6;
         for (i = [0 : locker_num_bays - 1]) {
             left_wall_x = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
             right_wall_x = (i + 1) * (locker_bay_width + plywood_thickness);
@@ -412,13 +431,11 @@ module mudroom_benches() {
 
 // --- Render Room ---
 scale(inch) {
-    if (show_walls) room_walls();
+    room_walls();
     if (show_floor) room_floor();
     
     // Platforms
     if (show_platforms) room_base_platforms();
-    
-    
     
     room_windows();
     
