@@ -100,7 +100,7 @@ color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
 color_cabinet      = [0.15, 0.28, 0.22, 1.0]; // Rich dark forest green painted finish
 color_hook         = [0.20, 0.20, 0.20, 1.0]; // Oil rubbed bronze hooks
 color_platform     = [0.22, 0.22, 0.22, 1.0]; // Charcoal/dark slate toe kick wrapper
-color_basket       = [0.82, 0.70, 0.54, 1.0]; // Natural rattan/wicker color
+color_basket       = [0.15, 0.15, 0.15, 1.0]; // Sleek matte black/dark charcoal baskets
 
 module room_walls() {
     // North Wall: X from 0 to 108 + thickness, Y from 71 to 71 + thickness
