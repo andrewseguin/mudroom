@@ -307,7 +307,7 @@ module basket_unit(w, d, h) {
     }
 }
 
-// Reusable Beadboard Backing Sheet
+// Reusable Beadboard Backing Sheet (with shadow-enhanced grooves)
 module beadboard_backing(w, h, t) {
     color(color_cabinet)
     difference() {
@@ -317,12 +317,15 @@ module beadboard_backing(w, h, t) {
         // Vertical bead grooves (spaced every 2 inches)
         bead_spacing = 2.0;
         num_grooves = floor(w / bead_spacing);
+        
+        // Draw grooves with a darker cabinet shade for visual shadow contrast
+        color_shadow = [color_cabinet[0]*0.72, color_cabinet[1]*0.72, color_cabinet[2]*0.72, 1.0];
         for (j = [1 : num_grooves]) {
             x_pos = j * bead_spacing;
             if (x_pos < w) {
-                // Subtract a tiny vertical bead groove
+                color(color_shadow)
                 translate([x_pos, t, 0])
-                    cylinder(h = h + 0.1, r = 0.05, $fn = 6);
+                    cylinder(h = h + 0.1, r = 0.08, $fn = 8);
             }
         }
     }
