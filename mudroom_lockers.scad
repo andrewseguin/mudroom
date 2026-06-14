@@ -307,6 +307,27 @@ module basket_unit(w, d, h) {
     }
 }
 
+// Reusable Beadboard Backing Sheet
+module beadboard_backing(w, h, t) {
+    color(color_cabinet)
+    difference() {
+        // Main solid backing sheet
+        cube([w, t, h]);
+        
+        // Vertical bead grooves (spaced every 2 inches)
+        bead_spacing = 2.0;
+        num_grooves = floor(w / bead_spacing);
+        for (j = [1 : num_grooves]) {
+            x_pos = j * bead_spacing;
+            if (x_pos < w) {
+                // Subtract a tiny vertical bead groove
+                translate([x_pos, t, 0])
+                    cylinder(h = h + 0.1, r = 0.05, $fn = 6);
+            }
+        }
+    }
+}
+
 module room_base_platforms() {
     total_locker_width = locker_num_bays * locker_bay_width + (locker_num_bays + 1) * plywood_thickness;
 
@@ -334,57 +355,61 @@ module room_base_platforms() {
 
 module mudroom_lockers() {
     total_locker_width = locker_num_bays * locker_bay_width + (locker_num_bays + 1) * plywood_thickness;
+    backing_thickness = 0.25;
     
     // Positioned in the South-East corner (rests on base platform at Z = base_platform_height)
     translate([north_wall_length - total_locker_width, 0, base_platform_height]) {
-        // 1. Vertical upright divider panels above the benchtop (Z = 14.5 to 86.5)
+        // 0. Thin solid beadboard backing sheet (sitting at the back wall Y = 0)
+        beadboard_backing(total_locker_width, locker_height - base_platform_height, backing_thickness);
+        
+        // 1. Vertical upright divider panels above the benchtop (resting on backing)
         for (i = [0 : locker_num_bays]) {
             x_pos = i * (locker_bay_width + plywood_thickness);
             color(color_cabinet)
-            translate([x_pos, 0, locker_bench_height - base_platform_height])
-                cube([plywood_thickness, locker_depth, locker_height - locker_bench_height]);
+            translate([x_pos, backing_thickness, locker_bench_height - base_platform_height])
+                cube([plywood_thickness, locker_depth - backing_thickness, locker_height - locker_bench_height]);
         }
         
-        // 2. Top roof panel
+        // 2. Top roof panel (sitting in front of backing)
         color(color_cabinet)
-        translate([0, 0, locker_height - base_platform_height - plywood_thickness])
-            cube([total_locker_width, locker_depth, plywood_thickness]);
+        translate([0, backing_thickness, locker_height - base_platform_height - plywood_thickness])
+            cube([total_locker_width, locker_depth - backing_thickness, plywood_thickness]);
             
         // 3. Top cubby divider shelf
         color(color_cabinet)
-        translate([0, 0, locker_height - base_platform_height - locker_upper_height - plywood_thickness])
-            cube([total_locker_width, locker_depth - 0.5, plywood_thickness]);
+        translate([0, backing_thickness, locker_height - base_platform_height - locker_upper_height - plywood_thickness])
+            cube([total_locker_width, locker_depth - backing_thickness - 0.5, plywood_thickness]);
             
         // 4. Stained solid wood bench top (1.5" thick with 0.5" overhang in Y, positioned at world Z = 18")
+        // Overlap covering the backing panel top edge
         color(color_floor)
         translate([0, 0, locker_bench_height - base_platform_height - bench_top_thickness])
             cube([total_locker_width, locker_depth + 0.5, bench_top_thickness]);
             
         // 5. Lower cabinet bottom shelf (resting directly on the 2x4 platform)
         color(color_cabinet)
-        translate([0, 0, 0])
-            cube([total_locker_width, locker_depth, plywood_thickness]);
+        translate([0, backing_thickness, 0])
+            cube([total_locker_width, locker_depth - backing_thickness, plywood_thickness]);
             
         // 6. Under-bench vertical support panels (spaced to bisect the floor space)
-        // Splitting the 45" wide carcass into two equal-width compartments below the bench (21.3" interior each)
         support_h = locker_bench_height - base_platform_height - bench_top_thickness - plywood_thickness; // 12.25"
         
         // Left outer support panel (X = 0)
         color(color_cabinet)
-        translate([0, 0, plywood_thickness])
-            cube([plywood_thickness, locker_depth, support_h]);
+        translate([0, backing_thickness, plywood_thickness])
+            cube([plywood_thickness, locker_depth - backing_thickness, support_h]);
             
-        // Middle bisecting support panel (centered under the visible bench opening)
+        // Middle bisecting support panel (centered under the bench)
         color(color_cabinet)
-        translate([(total_locker_width - bench_depth)/2 - plywood_thickness/2, 0, plywood_thickness])
-            cube([plywood_thickness, locker_depth, support_h]);
+        translate([(total_locker_width - bench_depth)/2 - plywood_thickness/2, backing_thickness, plywood_thickness])
+            cube([plywood_thickness, locker_depth - backing_thickness, support_h]);
             
         // Right outer support panel (flush against East wall at X = total_locker_width - thickness)
         color(color_cabinet)
-        translate([total_locker_width - plywood_thickness, 0, plywood_thickness])
-            cube([plywood_thickness, locker_depth, support_h]);
+        translate([total_locker_width - plywood_thickness, backing_thickness, plywood_thickness])
+            cube([plywood_thickness, locker_depth - backing_thickness, support_h]);
         
-        // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf)
+        // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf, mounted on beadboard backing)
         hook_z = locker_hook_height - base_platform_height;
         for (i = [0 : locker_num_bays - 1]) {
             left_wall_x = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
@@ -404,22 +429,14 @@ module mudroom_lockers() {
         // 8. Baskets (if toggled on)
         if (show_baskets) {
             basket_w = locker_bay_width - 1.0; // ~9.25" wide
-            basket_d = locker_depth - 1.0;     // ~17" deep
+            basket_d = locker_depth - backing_thickness - 1.0; // ~16.75" deep
             basket_h = locker_upper_height - 2.0; // ~10" tall
             
             // Baskets in the top cubbies (1 in each of the 4 bays)
             for (i = [0 : locker_num_bays - 1]) {
                 x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness + (locker_bay_width - basket_w)/2;
-                translate([x_pos, 0.5, locker_height - base_platform_height - locker_upper_height])
+                translate([x_pos, backing_thickness + 0.5, locker_height - base_platform_height - locker_upper_height])
                     basket_unit(basket_w, basket_d, basket_h);
-            }
-            
-            // Baskets sitting on the bench seat (1 in each of the 4 locker bays)
-            basket_seat_h = 8.0; // 8" tall seat baskets for quick drop storage
-            for (i = [0 : locker_num_bays - 1]) {
-                x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness + (locker_bay_width - basket_w)/2;
-                translate([x_pos, 0.5, locker_bench_height - base_platform_height])
-                    basket_unit(basket_w, basket_d, basket_seat_h);
             }
             
             // Baskets in the bottom cubbies (exactly 2 baskets total, centered in the 2 visible compartments)
@@ -429,12 +446,12 @@ module mudroom_lockers() {
             gap = (comp_w - basket_lw) / 2;
             
             // Compartment 1 (left visible bay)
-            translate([plywood_thickness + gap, 0.5, plywood_thickness])
+            translate([plywood_thickness + gap, backing_thickness + 0.5, plywood_thickness])
                 basket_unit(basket_lw, basket_d, 10);
                 
             // Compartment 2 (right visible bay)
             comp2_x = visible_locker_w / 2 + plywood_thickness / 2;
-            translate([comp2_x + gap, 0.5, plywood_thickness])
+            translate([comp2_x + gap, backing_thickness + 0.5, plywood_thickness])
                 basket_unit(basket_lw, basket_d, 10);
         }
     }
