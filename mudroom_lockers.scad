@@ -374,9 +374,9 @@ module mudroom_lockers() {
         translate([0, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
             
-        // Middle bisecting support panel (centered under the bench)
+        // Middle bisecting support panel (centered under the visible bench opening)
         color(color_cabinet)
-        translate([total_locker_width/2 - plywood_thickness/2, 0, plywood_thickness])
+        translate([(total_locker_width - bench_depth)/2 - plywood_thickness/2, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
             
         // Right outer support panel (flush against East wall at X = total_locker_width - thickness)
