@@ -427,8 +427,18 @@ module mudroom_benches() {
         // South support against lockers removed to allow open access to corner storage
         
             
-        // Middle support divider
-        translate([north_wall_length - bench_depth, 18 + 17.5 - plywood_thickness/2, base_platform_height])
+        // Two support dividers splitting the 35" visible opening into 3 equal bays
+        visible_east_w = 53 - 18;
+        east_bay_w = (visible_east_w - 2 * plywood_thickness) / 3;
+        
+        // Divider 1
+        y_pos_1 = 18 + east_bay_w + plywood_thickness/2;
+        translate([north_wall_length - bench_depth, y_pos_1 - plywood_thickness/2, base_platform_height])
+            cube([bench_depth - 0.5, plywood_thickness, bench_height - base_platform_height - bench_top_thickness]);
+            
+        // Divider 2
+        y_pos_2 = 18 + 2 * east_bay_w + 1.5 * plywood_thickness;
+        translate([north_wall_length - bench_depth, y_pos_2 - plywood_thickness/2, base_platform_height])
             cube([bench_depth - 0.5, plywood_thickness, bench_height - base_platform_height - bench_top_thickness]);
             
         // Cabinet bottom shelf (resting on platform, runs up to North bench Y=53)
