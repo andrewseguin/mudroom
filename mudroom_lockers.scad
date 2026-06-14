@@ -27,11 +27,17 @@ window_top_height    = 96;
 window_height        = window_top_height - window_bottom_height;
 window_from_east     = (door_from_east - window_width) / 2; // Centered in the 53" gap
 
+// --- Transom Window Parameters (Inches) ---
+transom_bottom_height = 82; // 2 inches header gap above the 80" door
+transom_top_height    = 96;
+transom_height        = transom_top_height - transom_bottom_height;
+
 // --- Visualization Toggles ---
-show_walls  = true;
-show_floor  = true;
-show_door   = true;
-show_window = true;
+show_walls   = true;
+show_floor   = true;
+show_door    = true;
+show_window  = true;
+show_transom = true;
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
@@ -42,7 +48,7 @@ color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
 
 module room_walls() {
     // North Wall: X from 0 to 108 + thickness, Y from 71 to 71 + thickness
-    // Cuts the back entrance door and window openings
+    // Cuts the back entrance door, main window, and transom window openings
     color(color_wall)
     difference() {
         translate([0, east_wall_length, 0])
@@ -55,6 +61,10 @@ module room_walls() {
         // Window opening cut
         translate([north_wall_length - window_from_east - window_width, east_wall_length - 0.5, window_bottom_height])
             cube([window_width, wall_thickness + 1, window_height]);
+
+        // Transom window opening cut
+        translate([north_wall_length - door_from_east - door_width, east_wall_length - 0.5, transom_bottom_height])
+            cube([door_width, wall_thickness + 1, transom_height]);
     }
 
     // South Wall: X from 0 to 108 + thickness, Y from -thickness to 0
@@ -91,31 +101,41 @@ module room_door() {
     }
 }
 
-module room_window() {
-    window_x = north_wall_length - window_from_east - window_width;
-    
+// Reusable Window Component
+module window_unit(w_x, w_y, w_z, w_width, w_height) {
     // Draw Glass
     color(color_window_glass)
-    translate([window_x, east_wall_length + (wall_thickness - 0.25)/2, window_bottom_height])
-        cube([window_width, 0.25, window_height]);
+    translate([w_x, w_y + (wall_thickness - 0.25)/2, w_z])
+        cube([w_width, 0.25, w_height]);
         
     // Draw simple frame/trim
     color(color_window_frame)
     difference() {
         // Outer frame
-        translate([window_x - 1, east_wall_length - 0.1, window_bottom_height - 1])
-            cube([window_width + 2, wall_thickness + 0.2, window_height + 2]);
+        translate([w_x - 1, w_y - 0.1, w_z - 1])
+            cube([w_width + 2, wall_thickness + 0.2, w_height + 2]);
         // Inner cutout (glass size)
-        translate([window_x, east_wall_length - 0.2, window_bottom_height])
-            cube([window_width, wall_thickness + 0.4, window_height]);
+        translate([w_x, w_y - 0.2, w_z])
+            cube([w_width, wall_thickness + 0.4, w_height]);
     }
+}
+
+module room_window() {
+    window_x = north_wall_length - window_from_east - window_width;
+    window_unit(window_x, east_wall_length, window_bottom_height, window_width, window_height);
+}
+
+module room_transom() {
+    transom_x = north_wall_length - door_from_east - door_width;
+    window_unit(transom_x, east_wall_length, transom_bottom_height, door_width, transom_height);
 }
 
 // --- Render Room ---
 scale(inch) {
-    if (show_walls)  room_walls();
-    if (show_floor)  room_floor();
-    if (show_door)   room_door();
-    if (show_window) room_window();
+    if (show_walls)   room_walls();
+    if (show_floor)   room_floor();
+    if (show_door)    room_door();
+    if (show_window)  room_window();
+    if (show_transom) room_transom();
 }
 
