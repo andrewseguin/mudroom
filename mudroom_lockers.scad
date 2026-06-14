@@ -414,6 +414,14 @@ module mudroom_lockers() {
                     basket_unit(basket_w, basket_d, basket_h);
             }
             
+            // Baskets sitting on the bench seat (1 in each of the 4 locker bays)
+            basket_seat_h = 8.0; // 8" tall seat baskets for quick drop storage
+            for (i = [0 : locker_num_bays - 1]) {
+                x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness + (locker_bay_width - basket_w)/2;
+                translate([x_pos, 0.5, locker_bench_height - base_platform_height])
+                    basket_unit(basket_w, basket_d, basket_seat_h);
+            }
+            
             // Baskets in the bottom cubbies (exactly 2 baskets total, centered in the 2 visible compartments)
             visible_locker_w = total_locker_width - bench_depth; // 26.75"
             comp_w = visible_locker_w / 2 - plywood_thickness;  // ~12.6"
