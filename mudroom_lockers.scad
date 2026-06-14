@@ -92,12 +92,12 @@ show_baskets     = true;  // Renders woven rattan baskets inside the cubbies
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
-color_floor        = [0.45, 0.35, 0.25, 1.0]; // Warm wood tone (also used for bench tops)
+color_floor        = [0.82, 0.68, 0.48, 1.0]; // Natural honey wood tone (used for floor & benchtops)
 color_door         = [0.75, 0.55, 0.40, 0.8]; // Semi-transparent wood tone
 color_door_swing   = [0.95, 0.45, 0.45, 0.2]; // Semi-transparent red clearance zone
 color_window_glass = [0.65, 0.85, 0.95, 0.4]; // Semi-transparent glass blue
 color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
-color_cabinet      = [0.90, 0.90, 0.90, 1.0]; // Light grey painted cabinet finish
+color_cabinet      = [0.15, 0.28, 0.22, 1.0]; // Rich dark forest green painted finish
 color_hook         = [0.20, 0.20, 0.20, 1.0]; // Oil rubbed bronze hooks
 color_platform     = [0.22, 0.22, 0.22, 1.0]; // Charcoal/dark slate toe kick wrapper
 color_basket       = [0.82, 0.70, 0.54, 1.0]; // Natural rattan/wicker color
