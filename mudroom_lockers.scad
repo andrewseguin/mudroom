@@ -326,9 +326,9 @@ module mudroom_lockers() {
         for (i = [0 : locker_num_bays]) {
             x_pos = i * (locker_bay_width + plywood_thickness);
             
-            // To make the South-East corner accessible underneath the bench,
-            // dividers near the corner (3 and 4) stop at the benchtop (world Z = 18")
-            starts_at_bench = (i == 3 || (locker_num_bays == 4 && i == 4));
+            // To keep exactly one divider under the locker bench and keep the corner open,
+            // all dividers from index 2 and up (near the East corner) stop at the benchtop (world Z = 18")
+            starts_at_bench = (i >= 2);
             z_start = starts_at_bench ? (locker_bench_height - base_platform_height) : 0;
             z_height = locker_height - base_platform_height - z_start;
             
