@@ -62,8 +62,8 @@ east_window_height        = east_window_top_height - east_window_bottom_height;
 east_window_from_north    = 2; // 2 inches away from North wall
 
 // --- Locker Parameters (Inches) ---
-locker_num_bays     = 4;    // 4 bays for 4 kids
-locker_bay_width    = 11;   // Interior width of each bay (backpacks hang sideways)
+locker_num_bays     = 3;    // 3 bays (kids share hooks/bays)
+locker_bay_width    = 14;   // Interior width of each bay (backpacks hang sideways)
 locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
