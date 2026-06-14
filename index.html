@@ -119,6 +119,42 @@
             font-style: italic;
         }
 
+        /* Budget Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.total-row td {
+            font-weight: 600;
+            background-color: #fafaf9;
+            color: var(--primary-color);
+            border-top: 2px solid var(--primary-color);
+        }
+
         /* Lists */
         ul, ol {
             margin: 0 0 24px 0;
@@ -289,6 +325,7 @@
     <h3>Sheet Goods &amp; Lumber</h3>
     <ul>
         <li><strong>3x Sheets of 3/4" Veneer-Core Birch Plywood:</strong> For all carcasses, partitions, bottom shelves, and dividers.</li>
+        <li><strong>2x Sheets of 1/2" Veneer-Core Birch Plywood:</strong> For building the 15 custom wood storage boxes/bins.</li>
         <li><strong>1x Sheet of 1/4" Beadboard Plywood Panel:</strong> For the locker backing panel.</li>
         <li><strong>6x 8-foot 2x4 Framing Lumber:</strong> For building the toe kick platform bases.</li>
     </ul>
@@ -297,13 +334,13 @@
     <ul>
         <li><strong>Solid Birch Trim (1/4" x 3/4" strips):</strong> For gluing and nail-fastening onto exposed plywood front edges.</li>
         <li><strong>8x Double Coat Hooks:</strong> Warm metallic bronze finish.</li>
-        <li><strong>Charcoal Grey Felt/Canvas Baskets:</strong>
+        <li><strong>15x Custom DIY Wood Storage Bins:</strong> Built from 1/2" Birch plywood (2 sheets). Outer dimensions:
             <ul>
-                <li><strong>4x Top Baskets:</strong> <code>9.25" W x 17" D x 10" H</code> (Locker top cubbies)</li>
-                <li><strong>4x Seat Baskets:</strong> <code>9.25" W x 17" D x 8" H</code> (Locker bench seat)</li>
-                <li><strong>2x Lower Locker Baskets:</strong> <code>11.0" W x 17" D x 10" H</code> (Locker base)</li>
-                <li><strong>2x North Bench Baskets:</strong> <code>13.0" W x 17" D x 10" H</code> (North bench)</li>
-                <li><strong>3x East Bench Baskets:</strong> <code>9.5" W x 17" D x 10" H</code> (East bench)</li>
+                <li><strong>4x Top Bins:</strong> <code>9.25" W x 17" D x 10" H</code> (Locker top cubbies)</li>
+                <li><strong>4x Seat Bins:</strong> <code>9.25" W x 17" D x 8" H</code> (Locker bench seat)</li>
+                <li><strong>2x Lower Locker Bins:</strong> <code>11.0" W x 17" D x 10" H</code> (Locker base)</li>
+                <li><strong>2x North Bench Bins:</strong> <code>13.0" W x 17" D x 10" H</code> (North bench)</li>
+                <li><strong>3x East Bench Bins:</strong> <code>9.5" W x 17" D x 10" H</code> (East bench)</li>
             </ul>
         </li>
         <li><strong>Milescraft JointMate (3/8" self-centering dowel jig):</strong> For drilling perfectly straight, centered edge holes.</li>
@@ -318,8 +355,8 @@
         <ol>
             <li><strong>Cut Plywood:</strong> Rip all carcass side panels to exactly <code>18.0"</code> wide. Cut all vertical dividers and bottom shelves to length.</li>
             <li><strong>Edge Banding:</strong> Glue and nail the solid wood trim onto all exposed front edges of the plywood. Sand flush.</li>
-            <li><strong>Assemble Lower Cabinets:</strong> Assemble the South Locker base carcass and the North Bench base carcass. <em>Do not cut or build the East Bench carcass yet.</em></li>
-            <li><strong>Finishing:</strong> Sand all carcasses to 220-grit. Prime with shellac-based primer (Zinsser BIN) and paint them dark forest green. Stain and seal the butcher block benchtops with 4 coats of polyurethane.</li>
+            <li><strong>Assemble Lower Cabinets &amp; Bins:</strong> Assemble the South Locker base carcass and the North Bench base carcass. Build the 15 custom wood storage boxes using wood glue and 1" brad nails, and jigsaw out the front finger-pull slots. <em>Do not cut or build the East Bench carcass yet.</em></li>
+            <li><strong>Finishing:</strong> Sand all carcasses to 220-grit. Prime with shellac-based primer (Zinsser BIN) and paint them dark forest green (paint the box fronts forest green, or clear-coat them to contrast). Stain and seal the butcher block benchtops with 4 coats of polyurethane.</li>
         </ol>
     </div>
 
@@ -379,6 +416,107 @@
         <div class="alert-title">⚠️ Prevent Paint Sticking (Blocking)</div>
         Urethane acrylic cabinet paint takes 7 to 14 days to fully cure to maximum hardness. Avoid sliding the heavy charcoal baskets onto the painted shelves for at least a week, or apply small felt pads to the underside of the baskets to prevent them from sticking and tearing off the green paint.
     </div>
+
+    <h2>6. Estimated Cost Breakdown (Home Depot Pricing)</h2>
+    <p>Below is the estimated materials budget for the build, based on standard Home Depot pricing:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit Cost</th>
+                <th>Total Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Butcher Block</strong></td>
+                <td>96" x 25" Unfinished Birch slab</td>
+                <td>1</td>
+                <td>$199.00</td>
+                <td>$199.00</td>
+            </tr>
+            <tr>
+                <td><strong>Butcher Block</strong></td>
+                <td>48" x 25" Unfinished Birch slab</td>
+                <td>1</td>
+                <td>$119.00</td>
+                <td>$119.00</td>
+            </tr>
+            <tr>
+                <td><strong>Plywood (Carcass)</strong></td>
+                <td>3/4" Veneer-Core Birch Plywood (4x8)</td>
+                <td>3</td>
+                <td>$75.00</td>
+                <td>$225.00</td>
+            </tr>
+            <tr>
+                <td><strong>Plywood (Crates)</strong></td>
+                <td>1/2" Veneer-Core Birch Plywood (4x8)</td>
+                <td>2</td>
+                <td>$50.00</td>
+                <td>$100.00</td>
+            </tr>
+            <tr>
+                <td><strong>Plywood (Backing)</strong></td>
+                <td>1/4" Beadboard panel (4x8)</td>
+                <td>1</td>
+                <td>$35.00</td>
+                <td>$35.00</td>
+            </tr>
+            <tr>
+                <td><strong>Lumber (Platform)</strong></td>
+                <td>2x4x8 framing lumber</td>
+                <td>6</td>
+                <td>$4.00</td>
+                <td>$24.00</td>
+            </tr>
+            <tr>
+                <td><strong>Trim</strong></td>
+                <td>Solid Birch face trim strips</td>
+                <td>-</td>
+                <td>-</td>
+                <td>$30.00</td>
+            </tr>
+            <tr>
+                <td><strong>Hardware (Hooks)</strong></td>
+                <td>Bronze double coat hooks</td>
+                <td>8</td>
+                <td>$4.50</td>
+                <td>$36.00</td>
+            </tr>
+            <tr>
+                <td><strong>Hardware (Jigs)</strong></td>
+                <td>Milescraft JointMate + dowels + pins</td>
+                <td>-</td>
+                <td>-</td>
+                <td>$25.00</td>
+            </tr>
+            <tr>
+                <td><strong>Fasteners</strong></td>
+                <td>Cabinet screws &amp; pocket screws</td>
+                <td>-</td>
+                <td>-</td>
+                <td>$30.00</td>
+            </tr>
+            <tr>
+                <td><strong>Finishes</strong></td>
+                <td>Cabinet paint, shellac primer, polyurethane</td>
+                <td>-</td>
+                <td>-</td>
+                <td>$127.00</td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>TOTAL</strong></td>
+                <td><strong>Estimated Materials Cost</strong></td>
+                <td></td>
+                <td></td>
+                <td><strong>$1,025.00</strong></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <footer>
