@@ -33,16 +33,18 @@ transom_top_height    = 96;
 transom_height        = transom_top_height - transom_bottom_height;
 
 // --- Visualization Toggles ---
-show_walls   = true;
-show_floor   = true;
-show_door    = true;
-show_window  = true;
-show_transom = true;
+show_walls      = true;
+show_floor      = true;
+show_door       = true;
+show_window     = true;
+show_transom    = true;
+show_door_swing = true; // Shows the door's opening path/clearance zone on the floor
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
 color_floor        = [0.45, 0.35, 0.25, 1.0]; // Warm wood tone
 color_door         = [0.75, 0.55, 0.40, 0.8]; // Semi-transparent wood tone
+color_door_swing   = [0.95, 0.45, 0.45, 0.2]; // Semi-transparent red clearance zone
 color_window_glass = [0.65, 0.85, 0.95, 0.4]; // Semi-transparent glass blue
 color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
 
@@ -101,6 +103,43 @@ module room_door() {
     }
 }
 
+module room_door_swing() {
+    hinge_x = door_hinge_east ? (north_wall_length - door_from_east) : (north_wall_length - door_from_east - door_width);
+    
+    // Position at the floor level (slightly elevated to prevent Z-fighting)
+    translate([hinge_x, east_wall_length, 0.01]) {
+        // 1. Semi-transparent clearance wedge
+        color(color_door_swing)
+        intersection() {
+            cylinder(h = 0.01, r = door_width, $fn = 60);
+            if (door_hinge_east) {
+                translate([-door_width, -door_width, 0])
+                    cube([door_width, door_width, 0.02]);
+            } else {
+                translate([0, -door_width, 0])
+                    cube([door_width, door_width, 0.02]);
+            }
+        }
+        
+        // 2. Arc outline
+        color([0.5, 0.5, 0.5, 0.6])
+        intersection() {
+            difference() {
+                cylinder(h = 0.02, r = door_width, $fn = 60);
+                translate([0, 0, -0.01])
+                    cylinder(h = 0.04, r = door_width - 0.5, $fn = 60); // 0.5" thickness
+            }
+            if (door_hinge_east) {
+                translate([-door_width, -door_width, 0])
+                    cube([door_width, door_width, 0.03]);
+            } else {
+                translate([0, -door_width, 0])
+                    cube([door_width, door_width, 0.03]);
+            }
+        }
+    }
+}
+
 // Reusable Window Component
 module window_unit(w_x, w_y, w_z, w_width, w_height) {
     // Draw Glass
@@ -132,10 +171,11 @@ module room_transom() {
 
 // --- Render Room ---
 scale(inch) {
-    if (show_walls)   room_walls();
-    if (show_floor)   room_floor();
-    if (show_door)    room_door();
-    if (show_window)  room_window();
-    if (show_transom) room_transom();
+    if (show_walls)      room_walls();
+    if (show_floor)      room_floor();
+    if (show_door)       room_door();
+    if (show_door_swing) room_door_swing();
+    if (show_window)     room_window();
+    if (show_transom)    room_transom();
 }
 
