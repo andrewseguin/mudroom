@@ -80,6 +80,7 @@ show_transom     = true;
 show_east_window = true;
 show_lockers     = true; // Renders the South wall locker cabinet unit
 show_benches     = true; // Renders the North & East wall L-shaped benches
+show_glass       = true; // Set to false to hide glass panes if preview transparency blocks your view
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
@@ -147,9 +148,11 @@ module room_floor() {
 // Reusable Window Component
 module window_unit(w_x, w_y, w_z, w_width, w_height) {
     // Draw Glass
-    color(color_window_glass)
-    translate([w_x, w_y + (wall_thickness - 0.25)/2, w_z])
-        cube([w_width, 0.25, w_height]);
+    if (show_glass) {
+        color(color_window_glass)
+        translate([w_x, w_y + (wall_thickness - 0.25)/2, w_z])
+            cube([w_width, 0.25, w_height]);
+    }
         
     // Draw simple frame/trim
     color(color_window_frame)
