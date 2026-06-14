@@ -412,9 +412,8 @@ module mudroom_benches() {
         
     // East bench carcass (rests on platform)
     color(color_cabinet) {
-        // South support (against lockers)
-        translate([north_wall_length - bench_depth, 18, base_platform_height])
-            cube([bench_depth, plywood_thickness, bench_height - base_platform_height - bench_top_thickness]);
+        // South support against lockers removed to allow open access to corner storage
+        
             
         // Middle support divider
         translate([north_wall_length - bench_depth, 18 + 17.5 - plywood_thickness/2, base_platform_height])
