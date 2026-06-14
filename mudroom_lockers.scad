@@ -424,8 +424,13 @@ module mudroom_benches() {
         translate([north_wall_length - bench_depth, 18 + plywood_thickness, base_platform_height])
             cube([bench_depth, 53 - (18 + plywood_thickness), plywood_thickness]);
             
-        // 3. Inside Corner Support Post (2"x2" support leg at the inside corner intersection)
+        // 3. Inside Corner Support Posts (2"x2" support legs at corner intersections)
+        // North-East corner pillar
         translate([90, 53, base_platform_height])
+            cube([2, 2, bench_height - base_platform_height - bench_top_thickness]);
+            
+        // South-East corner pillar (between lockers and East bench)
+        translate([90, 18 - 2, base_platform_height])
             cube([2, 2, bench_height - base_platform_height - bench_top_thickness]);
     }
 }
