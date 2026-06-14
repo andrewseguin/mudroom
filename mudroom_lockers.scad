@@ -84,7 +84,7 @@ show_east_window = true;
 show_lockers     = true; // Renders the South wall locker cabinet unit
 show_benches     = true; // Renders the North & East wall L-shaped benches
 show_platforms   = true; // Renders the 2x4 base platforms
-show_glass       = true; // Set to false to hide glass panes in preview mode
+show_glass       = false; // Set to false to hide glass panes if preview transparency blocks your view
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
