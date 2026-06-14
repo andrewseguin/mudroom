@@ -13,24 +13,26 @@ wall_thickness    = 4.5;
 floor_thickness   = 0.75;
 
 // --- North Door Parameters (Inches) ---
-north_door_from_east   = 53;
-north_door_width       = 36;
-north_door_height      = 80;
-north_door_thickness   = 1.75;
-north_door_trim_width  = 4;
-north_door_trim_thick  = 0.75;
-north_door_swing_angle = 0; // 0 = closed, 90 = open inward
-north_door_hinge_east  = true;
+north_door_from_east    = 53;
+north_door_width        = 36;
+north_door_height       = 80;
+north_door_thickness    = 1.75;
+north_door_trim_width   = 4;
+north_door_trim_thick   = 0.75;
+north_door_swing_angle  = 0; // 0 = closed, 90 = open inward
+north_door_hinge_east   = true;
+north_door_opens_inward = true; // Opens into the mudroom
 
 // --- South Door Parameters (Inches) ---
-south_door_from_east   = 50;
-south_door_width       = 36;
-south_door_height      = 80;
-south_door_thickness   = 1.75;
-south_door_trim_width  = 4;
-south_door_trim_thick  = 0.75;
-south_door_swing_angle = 90; // Open inward to show conflict zone
-south_door_hinge_east  = true; // Opposing the north door (hinge on East side)
+south_door_from_east    = 50;
+south_door_width        = 36;
+south_door_height       = 80;
+south_door_thickness    = 1.75;
+south_door_trim_width   = 4;
+south_door_trim_thick   = 0.75;
+south_door_swing_angle  = 90; // Open outward
+south_door_hinge_east   = false; // Hinged on the West side
+south_door_opens_inward = false; // Swings outward (out of the mudroom)
 
 // --- North Window Parameters (Inches) ---
 window_width         = 42;
@@ -141,10 +143,13 @@ module window_unit(w_x, w_y, w_z, w_width, w_height) {
 }
 
 // Reusable Door Component (includes trim, slab, swing path)
-module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swing_angle, hinge_east, trim_width, trim_thick, show_slab, show_swing) {
+module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swing_angle, hinge_east, opens_inward, trim_width, trim_thick, show_slab, show_swing) {
     wall_length = is_north ? north_wall_length : south_wall_length;
     hinge_x = hinge_east ? (wall_length - door_from_east) : (wall_length - door_from_east - width);
     y_dir = is_north ? -1 : 1;
+    
+    // Determine Y swing direction (swings towards positive Y or negative Y)
+    swings_pos_y = (is_north && !opens_inward) || (!is_north && opens_inward);
     
     // 1. Draw Door Trim (inward face)
     color(color_window_frame) {
@@ -166,10 +171,11 @@ module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swi
     // 2. Draw Door Slab
     if (show_slab) {
         translate([hinge_x, wall_y, 0])
-        rotate([0, 0, swing_angle * (hinge_east ? 1 : -1) * (is_north ? 1 : -1)]) {
+        rotate([0, 0, swing_angle * (hinge_east ? 1 : -1) * (is_north ? 1 : -1) * (opens_inward ? 1 : -1)]) {
             x_offset = hinge_east ? -width : 0;
+            y_offset = swings_pos_y ? 0 : -thickness;
             color(color_door)
-            translate([x_offset, is_north ? -thickness : 0, 0])
+            translate([x_offset, y_offset, 0])
                 cube([width, thickness, height]);
         }
     }
@@ -177,24 +183,17 @@ module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swi
     // 3. Draw Swing Path
     if (show_swing) {
         translate([hinge_x, wall_y, 0.01]) {
+            box_x = hinge_east ? -width : 0;
+            box_y = swings_pos_y ? 0 : -width;
+            
             // Clearance Wedge
             color(color_door_swing)
             intersection() {
                 cylinder(h = 0.01, r = width, $fn = 60);
-                if (is_north) {
-                    if (hinge_east) {
-                        translate([-width, -width, 0]) cube([width, width, 0.02]);
-                    } else {
-                        translate([0, -width, 0]) cube([width, width, 0.02]);
-                    }
-                } else {
-                    if (hinge_east) {
-                        translate([-width, 0, 0]) cube([width, width, 0.02]);
-                    } else {
-                        translate([0, 0, 0]) cube([width, width, 0.02]);
-                    }
-                }
+                translate([box_x, box_y, 0])
+                    cube([width, width, 0.02]);
             }
+            
             // Arc Outline
             color([0.5, 0.5, 0.5, 0.6])
             intersection() {
@@ -203,19 +202,8 @@ module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swi
                     translate([0, 0, -0.01])
                         cylinder(h = 0.04, r = width - 0.5, $fn = 60);
                 }
-                if (is_north) {
-                    if (hinge_east) {
-                        translate([-width, -width, 0]) cube([width, width, 0.03]);
-                    } else {
-                        translate([0, -width, 0]) cube([width, width, 0.03]);
-                    }
-                } else {
-                    if (hinge_east) {
-                        translate([-width, 0, 0]) cube([width, width, 0.03]);
-                    } else {
-                        translate([0, 0, 0]) cube([width, width, 0.03]);
-                    }
-                }
+                translate([box_x, box_y, 0])
+                    cube([width, width, 0.03]);
             }
         }
     }
@@ -257,6 +245,7 @@ scale(inch) {
         thickness       = north_door_thickness,
         swing_angle     = north_door_swing_angle,
         hinge_east      = north_door_hinge_east,
+        opens_inward    = north_door_opens_inward,
         trim_width      = north_door_trim_width,
         trim_thick      = north_door_trim_thick,
         show_slab       = show_doors,
@@ -273,6 +262,7 @@ scale(inch) {
         thickness       = south_door_thickness,
         swing_angle     = south_door_swing_angle,
         hinge_east      = south_door_hinge_east,
+        opens_inward    = south_door_opens_inward,
         trim_width      = south_door_trim_width,
         trim_thick      = south_door_trim_thick,
         show_slab       = show_doors,
