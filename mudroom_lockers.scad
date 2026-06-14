@@ -68,6 +68,7 @@ locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
 locker_upper_height = 12;   // Height of top cubby bins (12" from the top)
+locker_hook_height  = 56;   // Height of hooks from the floor (child-friendly)
 locker_shoe_height  = 8;    // Under-bench shoe shelf spacing
 
 // --- Bench Parameters (Inches) ---
@@ -340,8 +341,8 @@ module mudroom_lockers() {
                 cube([plywood_thickness, locker_depth - 0.5, cubby_interior_height]);
         }
         
-        // 7. Coat hooks (side-mounted on the walls of each locker bay, 6" below the cubby shelf)
-        hook_z = locker_height - base_platform_height - locker_upper_height - plywood_thickness - 6;
+        // 7. Coat hooks (side-mounted on the walls of each locker bay, relative to floor height)
+        hook_z = locker_hook_height - base_platform_height;
         for (i = [0 : locker_num_bays - 1]) {
             left_wall_x = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
             right_wall_x = (i + 1) * (locker_bay_width + plywood_thickness);
