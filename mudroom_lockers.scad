@@ -372,21 +372,16 @@ module mudroom_benches() {
     // North bench carcass (rests on base platform at Z = base_platform_height)
     color(color_cabinet) {
         // Left support panel (set back due to miter door clearance)
-        // Sits on platform, runs up to bottom of bench top
         translate([59, east_wall_length - bench_depth, base_platform_height])
-            cube([plywood_thickness, bench_depth, bench_height - base_platform_height - bench_top_thickness]);
-            
-        // Right support panel (flushes with East bench face)
-        translate([90 - plywood_thickness, east_wall_length - bench_depth, base_platform_height])
             cube([plywood_thickness, bench_depth, bench_height - base_platform_height - bench_top_thickness]);
             
         // Middle divider
         translate([59 + 24.5 - plywood_thickness/2, east_wall_length - bench_depth, base_platform_height])
             cube([plywood_thickness, bench_depth - 0.5, bench_height - base_platform_height - bench_top_thickness]);
             
-        // Cabinet bottom shelf (resting on platform)
+        // Cabinet bottom shelf (resting on platform, runs all the way to East wall)
         translate([59 + plywood_thickness, east_wall_length - bench_depth, base_platform_height])
-            cube([49 - 2*plywood_thickness, bench_depth, plywood_thickness]);
+            cube([108 - (59 + plywood_thickness), bench_depth, plywood_thickness]);
     }
     
     // 2. East Wall Bench (X: 90 to 108, Y: 18 to 53)
@@ -405,9 +400,13 @@ module mudroom_benches() {
         translate([north_wall_length - bench_depth, 18 + 17.5 - plywood_thickness/2, base_platform_height])
             cube([bench_depth - 0.5, plywood_thickness, bench_height - base_platform_height - bench_top_thickness]);
             
-        // Cabinet bottom shelf (resting on platform)
+        // Cabinet bottom shelf (resting on platform, runs up to North bench Y=53)
         translate([north_wall_length - bench_depth, 18 + plywood_thickness, base_platform_height])
-            cube([bench_depth, 35 - 2*plywood_thickness, plywood_thickness]);
+            cube([bench_depth, 53 - (18 + plywood_thickness), plywood_thickness]);
+            
+        // 3. Inside Corner Support Post (2"x2" support leg at the inside corner intersection)
+        translate([90, 53, base_platform_height])
+            cube([2, 2, bench_height - base_platform_height - bench_top_thickness]);
     }
 }
 
