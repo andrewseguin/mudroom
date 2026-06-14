@@ -360,9 +360,10 @@ module mudroom_lockers() {
         translate([0, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
             
-        // Middle bisecting support panel (centered under the bench)
+        // Middle bisecting support panel (bisects the visible floor opening: total width minus corner bench depth)
+        visible_locker_w = total_locker_width - bench_depth;
         color(color_cabinet)
-        translate([total_locker_width/2 - plywood_thickness/2, 0, plywood_thickness])
+        translate([visible_locker_w / 2 - plywood_thickness / 2, 0, plywood_thickness])
             cube([plywood_thickness, locker_depth, support_h]);
             
         // Right outer support panel (flush against East wall at X = total_locker_width - thickness)
@@ -405,8 +406,9 @@ module mudroom_benches() {
         translate([59, east_wall_length - bench_depth, base_platform_height])
             cube([plywood_thickness, bench_depth, bench_height - base_platform_height - bench_top_thickness]);
             
-        // Middle divider
-        translate([59 + 24.5 - plywood_thickness/2, east_wall_length - bench_depth, base_platform_height])
+        // Middle divider (bisects the visible floor opening: X from 59 to 90)
+        color(color_cabinet)
+        translate([74.5 - plywood_thickness/2, east_wall_length - bench_depth, base_platform_height])
             cube([plywood_thickness, bench_depth - 0.5, bench_height - base_platform_height - bench_top_thickness]);
             
         // Cabinet bottom shelf (resting on platform, runs all the way to East wall)
