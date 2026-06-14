@@ -63,6 +63,7 @@ locker_bay_width    = 15;   // Interior width of each bay
 locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
+locker_upper_height = 12;   // Height of top cubby bins (12" from the top)
 locker_shoe_height  = 8;    // Under-bench shoe shelf spacing
 
 // --- Bench Parameters (Inches) ---
@@ -289,6 +290,11 @@ module mudroom_lockers() {
         translate([0, 0, locker_height - plywood_thickness])
             cube([total_locker_width, locker_depth, plywood_thickness]);
             
+        // 3. Top cubby divider shelf
+        color(color_cabinet)
+        translate([0, 0, locker_height - locker_upper_height - plywood_thickness])
+            cube([total_locker_width, locker_depth - 0.5, plywood_thickness]);
+            
         // 4. Stained solid wood bench top (1.5" thick with 0.5" overhang in Y)
         color(color_floor)
         translate([0, 0, locker_bench_height - bench_top_thickness])
@@ -312,10 +318,10 @@ module mudroom_lockers() {
         for (i = [0 : locker_num_bays - 1]) {
             x_center = i * (locker_bay_width + plywood_thickness) + plywood_thickness + locker_bay_width / 2;
             
-            // Mounted on the back wall panel (Y = 0) inside each bay, 6" below top panel
-            translate([x_center - locker_bay_width / 4, 0.75, locker_height - plywood_thickness - 6])
+            // Mounted on the back wall panel (Y = 0) inside each bay, 6" below the cubby shelf
+            translate([x_center - locker_bay_width / 4, 0.75, locker_height - locker_upper_height - plywood_thickness - 6])
                 draw_hook();
-            translate([x_center + locker_bay_width / 4, 0.75, locker_height - plywood_thickness - 6])
+            translate([x_center + locker_bay_width / 4, 0.75, locker_height - locker_upper_height - plywood_thickness - 6])
                 draw_hook();
         }
     }
