@@ -322,19 +322,12 @@ module mudroom_lockers() {
     
     // Positioned in the South-East corner (rests on base platform at Z = base_platform_height)
     translate([north_wall_length - total_locker_width, 0, base_platform_height]) {
-        // 1. Vertical upright side panels and middle dividers (resting on platform)
+        // 1. Vertical upright divider panels above the benchtop (Z = 14.5 to 86.5)
         for (i = [0 : locker_num_bays]) {
             x_pos = i * (locker_bay_width + plywood_thickness);
-            
-            // To keep exactly one divider under the locker bench and keep the corner open,
-            // all dividers from index 2 and up (near the East corner) stop at the benchtop (world Z = 18")
-            starts_at_bench = (i >= 2);
-            z_start = starts_at_bench ? (locker_bench_height - base_platform_height) : 0;
-            z_height = locker_height - base_platform_height - z_start;
-            
             color(color_cabinet)
-            translate([x_pos, 0, z_start])
-                cube([plywood_thickness, locker_depth, z_height]);
+            translate([x_pos, 0, locker_bench_height - base_platform_height])
+                cube([plywood_thickness, locker_depth, locker_height - locker_bench_height]);
         }
         
         // 2. Top roof panel
@@ -358,7 +351,24 @@ module mudroom_lockers() {
             cube([total_locker_width, locker_depth, plywood_thickness]);
             
         
-        // 6. Vertical dividers under bench removed to keep bays wide and open (10.25" interior width)
+        // 6. Under-bench vertical support panels (spaced to bisect the floor space)
+        // Splitting the 45" wide carcass into two equal-width compartments below the bench (21.3" interior each)
+        support_h = locker_bench_height - base_platform_height - bench_top_thickness - plywood_thickness; // 12.25"
+        
+        // Left outer support panel (X = 0)
+        color(color_cabinet)
+        translate([0, 0, plywood_thickness])
+            cube([plywood_thickness, locker_depth, support_h]);
+            
+        // Middle bisecting support panel (centered under the bench)
+        color(color_cabinet)
+        translate([total_locker_width/2 - plywood_thickness/2, 0, plywood_thickness])
+            cube([plywood_thickness, locker_depth, support_h]);
+            
+        // Right outer support panel (flush against East wall at X = total_locker_width - thickness)
+        color(color_cabinet)
+        translate([total_locker_width - plywood_thickness, 0, plywood_thickness])
+            cube([plywood_thickness, locker_depth, support_h]);
         
         
         // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf)
