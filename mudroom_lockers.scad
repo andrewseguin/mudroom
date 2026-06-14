@@ -414,7 +414,7 @@ module mudroom_lockers() {
                     basket_unit(basket_w, basket_d, basket_h);
             }
             
-            // Baskets in the bottom cubbies (1 centered in each of the 2 equal-width compartments)
+            // Baskets in the bottom cubbies (exactly 2 baskets total, 1 centered in each of the 2 equal compartments)
             visible_locker_w = total_locker_width - bench_depth;
             comp_w = visible_locker_w / 2 - plywood_thickness; // ~21.3"
             basket_lw = 16.0; // Spacious 16" wide baskets for shoe/boot storage
@@ -434,6 +434,12 @@ module mudroom_lockers() {
 
 module mudroom_benches() {
     cubby_interior_height = bench_height - base_platform_height - bench_top_thickness - plywood_thickness; // 12.25"
+
+    // Spacing variables for East Bench (shared between carcass and baskets)
+    visible_east_w = 53 - 18;
+    east_bay_w = (visible_east_w - 2 * plywood_thickness) / 3;
+    y_pos_1 = 18 + east_bay_w + plywood_thickness/2;
+    y_pos_2 = 18 + 2 * east_bay_w + 1.5 * plywood_thickness;
 
     // 1. North Wall Bench (X: 59 to 108, Y: 53 to 71)
     // Wood bench top (butts into East wall corner at world Z = 18")
@@ -467,18 +473,12 @@ module mudroom_benches() {
     color(color_cabinet) {
         // South support against lockers removed to allow open access to corner storage
         
-            
         // Two support dividers splitting the 35" visible opening into 3 equal bays
-        visible_east_w = 53 - 18;
-        east_bay_w = (visible_east_w - 2 * plywood_thickness) / 3;
-        
         // Divider 1
-        y_pos_1 = 18 + east_bay_w + plywood_thickness/2;
         translate([north_wall_length - bench_depth, y_pos_1 - plywood_thickness/2, base_platform_height])
             cube([bench_depth - 0.5, plywood_thickness, bench_height - base_platform_height - bench_top_thickness]);
             
         // Divider 2
-        y_pos_2 = 18 + 2 * east_bay_w + 1.5 * plywood_thickness;
         translate([north_wall_length - bench_depth, y_pos_2 - plywood_thickness/2, base_platform_height])
             cube([bench_depth - 0.5, plywood_thickness, bench_height - base_platform_height - bench_top_thickness]);
             
@@ -512,6 +512,27 @@ module mudroom_benches() {
             rotate([0, 0, 180])
             basket_unit(basket_n2_w, basket_n_d, 10);
             
+        // East Bench Baskets (1 basket per compartment, facing West, i.e., rotated 90 deg around Z)
+        basket_ew = 9.5;
+        basket_e_d = bench_depth - 1.0; // 17"
+        
+        // Compartment 1: Y = 18 to y_pos_1
+        y_center_1 = 18 + (east_bay_w - basket_ew)/2;
+        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_1, base_platform_height + plywood_thickness])
+            rotate([0, 0, 90])
+            basket_unit(basket_ew, basket_e_d, 10);
+            
+        // Compartment 2: y_pos_1 to y_pos_2
+        y_center_2 = y_pos_1 + plywood_thickness/2 + (east_bay_w - basket_ew)/2;
+        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_2, base_platform_height + plywood_thickness])
+            rotate([0, 0, 90])
+            basket_unit(basket_ew, basket_e_d, 10);
+            
+        // Compartment 3: y_pos_2 to 53
+        y_center_3 = y_pos_2 + plywood_thickness/2 + (east_bay_w - basket_ew)/2;
+        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_3, base_platform_height + plywood_thickness])
+            rotate([0, 0, 90])
+            basket_unit(basket_ew, basket_e_d, 10);
     }
 }
 
