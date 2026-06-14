@@ -350,15 +350,9 @@ module mudroom_lockers() {
         translate([0, 0, 0])
             cube([total_locker_width, locker_depth, plywood_thickness]);
             
-        // 6. Vertical dividers for shoe cubbies under the bench (resting on bottom shelf)
-        // Cubby interior height = 18" - 1.5" (bench) - 3.5" (platform) - 0.75" (shelf) = 12.25"
-        cubby_interior_height = locker_bench_height - base_platform_height - bench_top_thickness - plywood_thickness;
-        for (i = [0 : locker_num_bays - 1]) {
-            x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness + locker_bay_width / 2 - plywood_thickness / 2;
-            color(color_cabinet)
-            translate([x_pos, 0, plywood_thickness])
-                cube([plywood_thickness, locker_depth - 0.5, cubby_interior_height]);
-        }
+        
+        // 6. Vertical dividers under bench removed to keep bays wide and open (10.25" interior width)
+        
         
         // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf)
         hook_z = locker_height - base_platform_height - locker_upper_height - plywood_thickness - 6;
