@@ -12,6 +12,10 @@ wall_height       = 108; // 9 feet
 wall_thickness    = 4.5;
 floor_thickness   = 0.75;
 
+// --- Materials (Inches) ---
+plywood_thickness   = 0.75; // Standard cabinet carcass material
+bench_top_thickness = 1.5;  // Premium thick wood top for benches
+
 // --- North Door Parameters (Inches) ---
 north_door_from_east    = 53;
 north_door_width        = 36;
@@ -53,6 +57,19 @@ east_window_top_height    = 96;
 east_window_height        = east_window_top_height - east_window_bottom_height;
 east_window_from_north    = 2; // 2 inches away from North wall
 
+// --- Locker Parameters (Inches) ---
+locker_num_bays     = 3;
+locker_bay_width    = 15;   // Interior width of each bay
+locker_depth        = 18;
+locker_height       = 96;
+locker_bench_height = 18;
+locker_upper_height = 14;   // Height of top cubby bins
+locker_shoe_height  = 8;    // Under-bench shoe shelf spacing
+
+// --- Bench Parameters (Inches) ---
+bench_depth  = 18;
+bench_height = 18;
+
 // --- Visualization Toggles ---
 show_walls       = true;
 show_floor       = true;
@@ -61,14 +78,18 @@ show_door_swing  = true; // Shows the door's opening path/clearance zone on the 
 show_windows     = true;
 show_transom     = true;
 show_east_window = true;
+show_lockers     = true; // Renders the South wall locker cabinet unit
+show_benches     = true; // Renders the North & East wall L-shaped benches
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
-color_floor        = [0.45, 0.35, 0.25, 1.0]; // Warm wood tone
+color_floor        = [0.45, 0.35, 0.25, 1.0]; // Warm wood tone (also used for bench tops)
 color_door         = [0.75, 0.55, 0.40, 0.8]; // Semi-transparent wood tone
 color_door_swing   = [0.95, 0.45, 0.45, 0.2]; // Semi-transparent red clearance zone
 color_window_glass = [0.65, 0.85, 0.95, 0.4]; // Semi-transparent glass blue
 color_window_frame = [0.95, 0.95, 0.95, 1.0]; // White window trim
+color_cabinet      = [0.90, 0.90, 0.90, 1.0]; // Light grey painted cabinet finish
+color_hook         = [0.20, 0.20, 0.20, 1.0]; // Oil rubbed bronze hooks
 
 module room_walls() {
     // North Wall: X from 0 to 108 + thickness, Y from 71 to 71 + thickness
@@ -230,6 +251,127 @@ module room_windows() {
     }
 }
 
+// Visual helper for double coat hooks
+module draw_hook() {
+    color(color_hook) {
+        // Base plate
+        translate([-0.4, 0, 0.5]) cube([0.8, 0.25, 2]);
+        // Upper hook arm
+        translate([0, 0.25, 2]) {
+            rotate([30, 0, 0]) cube([0.2, 1.2, 0.2], center=true);
+            translate([0, 0.6, 0.3]) sphere(r=0.25, $fn=10);
+        }
+        // Lower hook arm
+        translate([0, 0.25, 1]) {
+            rotate([-15, 0, 0]) cube([0.2, 0.9, 0.2], center=true);
+            translate([0, 0.45, -0.15]) sphere(r=0.25, $fn=10);
+        }
+    }
+}
+
+module mudroom_lockers() {
+    total_locker_width = locker_num_bays * locker_bay_width + (locker_num_bays + 1) * plywood_thickness;
+    
+    // Positioned in the South-East corner (X runs down from 108 towards 60, Y from 0 to 18)
+    translate([north_wall_length - total_locker_width, 0, 0]) {
+        // 1. Vertical upright side panels and middle dividers
+        for (i = [0 : locker_num_bays]) {
+            x_pos = i * (locker_bay_width + plywood_thickness);
+            color(color_cabinet)
+            translate([x_pos, 0, 0])
+                cube([plywood_thickness, locker_depth, locker_height]);
+        }
+        
+        // 2. Top roof panel
+        color(color_cabinet)
+        translate([0, 0, locker_height - plywood_thickness])
+            cube([total_locker_width, locker_depth, plywood_thickness]);
+            
+        // 3. Top cubby divider shelf
+        color(color_cabinet)
+        translate([0, 0, locker_height - locker_upper_height - plywood_thickness])
+            cube([total_locker_width, locker_depth - 0.5, plywood_thickness]);
+            
+        // 4. Stained solid wood bench top (1.5" thick with 0.5" overhang in Y)
+        color(color_floor)
+        translate([0, 0, locker_bench_height - bench_top_thickness])
+            cube([total_locker_width, locker_depth + 0.5, bench_top_thickness]);
+            
+        // 5. Lower shoe dividers shelf under bench
+        color(color_cabinet)
+        translate([0, 0, locker_bench_height - bench_top_thickness - locker_shoe_height - plywood_thickness])
+            cube([total_locker_width, locker_depth, plywood_thickness]);
+            
+        // 6. Vertical dividers for shoes under the bench
+        for (i = [0 : locker_num_bays - 1]) {
+            // Place a divider centered inside each locker bay shoe compartment
+            x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness + locker_bay_width / 2 - plywood_thickness / 2;
+            color(color_cabinet)
+            translate([x_pos, 0, 0])
+                cube([plywood_thickness, locker_depth - 0.5, locker_bench_height - bench_top_thickness - locker_shoe_height - plywood_thickness]);
+        }
+        
+        // 7. Coat hooks (2 per locker bay)
+        for (i = [0 : locker_num_bays - 1]) {
+            x_center = i * (locker_bay_width + plywood_thickness) + plywood_thickness + locker_bay_width / 2;
+            
+            // Mounted on the back wall panel (Y = 0) inside each bay
+            translate([x_center - locker_bay_width / 4, 0.75, locker_height - locker_upper_height - 12])
+                draw_hook();
+            translate([x_center + locker_bay_width / 4, 0.75, locker_height - locker_upper_height - 12])
+                draw_hook();
+        }
+    }
+}
+
+module mudroom_benches() {
+    // 1. North Wall Bench (X: 59 to 108, Y: 53 to 71)
+    // Wood bench top (butts into East wall corner)
+    color(color_floor)
+    translate([59, east_wall_length - bench_depth, bench_height - bench_top_thickness])
+        cube([49, bench_depth, bench_top_thickness]);
+        
+    // North bench support frame
+    color(color_cabinet) {
+        // Left support panel (next to North door trim)
+        translate([59, east_wall_length - bench_depth, 0])
+            cube([plywood_thickness, bench_depth, bench_height - bench_top_thickness]);
+            
+        // Right support panel (flushes with East bench face)
+        translate([90 - plywood_thickness, east_wall_length - bench_depth, 0])
+            cube([plywood_thickness, bench_depth, bench_height - bench_top_thickness]);
+            
+        // Middle divider
+        translate([59 + 24.5 - plywood_thickness/2, east_wall_length - bench_depth, 0])
+            cube([plywood_thickness, bench_depth - 0.5, bench_height - bench_top_thickness]);
+            
+        // Shoe shelf
+        translate([59 + plywood_thickness, east_wall_length - bench_depth, 4])
+            cube([49 - 2*plywood_thickness, bench_depth, plywood_thickness]);
+    }
+    
+    // 2. East Wall Bench (X: 90 to 108, Y: 18 to 53)
+    // Wood bench top (butts into North bench top at Y=53 and flushes against lockers at Y=18)
+    color(color_floor)
+    translate([north_wall_length - bench_depth, 18, bench_height - bench_top_thickness])
+        cube([bench_depth, 35, bench_top_thickness]);
+        
+    // East bench support frame
+    color(color_cabinet) {
+        // South support (against lockers)
+        translate([north_wall_length - bench_depth, 18, 0])
+            cube([bench_depth, plywood_thickness, bench_height - bench_top_thickness]);
+            
+        // Middle support divider
+        translate([north_wall_length - bench_depth, 18 + 17.5 - plywood_thickness/2, 0])
+            cube([bench_depth - 0.5, plywood_thickness, bench_height - bench_top_thickness]);
+            
+        // Shoe shelf
+        translate([north_wall_length - bench_depth, 18 + plywood_thickness, 4])
+            cube([bench_depth, 35 - 2*plywood_thickness, plywood_thickness]);
+    }
+}
+
 // --- Render Room ---
 scale(inch) {
     if (show_walls) room_walls();
@@ -252,7 +394,11 @@ scale(inch) {
         show_swing      = show_door_swing
     );
     
-
-    
     room_windows();
+    
+    // Lockers
+    if (show_lockers) mudroom_lockers();
+    
+    // Benches
+    if (show_benches) mudroom_benches();
 }
