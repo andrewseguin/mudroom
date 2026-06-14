@@ -414,22 +414,19 @@ module mudroom_lockers() {
                     basket_unit(basket_w, basket_d, basket_h);
             }
             
-            // Baskets in the bottom cubbies (2 in each of the 2 equal-width compartments)
+            // Baskets in the bottom cubbies (1 centered in each of the 2 equal-width compartments)
             visible_locker_w = total_locker_width - bench_depth;
             comp_w = visible_locker_w / 2 - plywood_thickness; // ~21.3"
-            basket_lw = (comp_w - 1.5) / 2; // ~9.9" wide basket
+            basket_lw = 16.0; // Spacious 16" wide baskets for shoe/boot storage
+            gap = (comp_w - basket_lw) / 2;
             
             // Compartment 1 (left)
-            translate([plywood_thickness + (comp_w - 2*basket_lw)/3, 0.5, plywood_thickness])
-                basket_unit(basket_lw, basket_d, 10);
-            translate([plywood_thickness + 2*(comp_w - 2*basket_lw)/3 + basket_lw, 0.5, plywood_thickness])
+            translate([plywood_thickness + gap, 0.5, plywood_thickness])
                 basket_unit(basket_lw, basket_d, 10);
                 
             // Compartment 2 (middle)
             comp2_x = total_locker_width/2 + plywood_thickness/2;
-            translate([comp2_x + (comp_w - 2*basket_lw)/3, 0.5, plywood_thickness])
-                basket_unit(basket_lw, basket_d, 10);
-            translate([comp2_x + 2*(comp_w - 2*basket_lw)/3 + basket_lw, 0.5, plywood_thickness])
+            translate([comp2_x + gap, 0.5, plywood_thickness])
                 basket_unit(basket_lw, basket_d, 10);
         }
     }
@@ -515,27 +512,6 @@ module mudroom_benches() {
             rotate([0, 0, 180])
             basket_unit(basket_n2_w, basket_n_d, 10);
             
-        // East Bench Baskets (1 basket per compartment, facing West, i.e., rotated 90 deg around Z)
-        basket_ew = 9.5;
-        basket_e_d = bench_depth - 1.0; // 17"
-        
-        // Compartment 1: Y = 18 to y_pos_1
-        y_center_1 = 18 + (east_bay_w - basket_ew)/2;
-        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_1, base_platform_height + plywood_thickness])
-            rotate([0, 0, 90])
-            basket_unit(basket_ew, basket_e_d, 10);
-            
-        // Compartment 2: y_pos_1 to y_pos_2
-        y_center_2 = y_pos_1 + plywood_thickness/2 + (east_bay_w - basket_ew)/2;
-        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_2, base_platform_height + plywood_thickness])
-            rotate([0, 0, 90])
-            basket_unit(basket_ew, basket_e_d, 10);
-            
-        // Compartment 3: y_pos_2 to 53
-        y_center_3 = y_pos_2 + plywood_thickness/2 + (east_bay_w - basket_ew)/2;
-        translate([north_wall_length - bench_depth + 0.5 + basket_e_d, y_center_3, base_platform_height + plywood_thickness])
-            rotate([0, 0, 90])
-            basket_unit(basket_ew, basket_e_d, 10);
     }
 }
 
