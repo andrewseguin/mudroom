@@ -252,22 +252,7 @@ scale(inch) {
         show_swing      = show_door_swing
     );
     
-    // South Door
-    door_unit(
-        wall_y          = 0,
-        is_north        = false,
-        door_from_east  = south_door_from_east,
-        width           = south_door_width,
-        height          = south_door_height,
-        thickness       = south_door_thickness,
-        swing_angle     = south_door_swing_angle,
-        hinge_east      = south_door_hinge_east,
-        opens_inward    = south_door_opens_inward,
-        trim_width      = south_door_trim_width,
-        trim_thick      = south_door_trim_thick,
-        show_slab       = show_doors,
-        show_swing      = show_door_swing
-    );
+
     
     room_windows();
 }
