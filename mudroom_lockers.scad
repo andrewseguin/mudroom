@@ -75,7 +75,7 @@ bench_depth  = 18;
 bench_height = 18;
 
 // --- Visualization Toggles ---
-show_north_wall  = true;  // Set to false to hide North wall and see interior easily
+show_north_wall  = false; // Set to false to hide North wall and see interior easily
 show_south_wall  = true;  // Set to false to hide South wall
 show_east_wall   = true;  // Set to false to hide East wall
 show_floor       = true;
