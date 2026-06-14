@@ -8,7 +8,7 @@ inch = 25.4; // 1 inch = 25.4 mm (OpenSCAD default unit is mm)
 north_wall_length = 108;
 south_wall_length = 108;
 east_wall_length  = 71;
-wall_height       = 96;
+wall_height       = 108; // 9 feet
 wall_thickness    = 4.5;
 floor_thickness   = 0.75;
 
