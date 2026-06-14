@@ -62,12 +62,13 @@ east_window_height        = east_window_top_height - east_window_bottom_height;
 east_window_from_north    = 2; // 2 inches away from North wall
 
 // --- Locker Parameters (Inches) ---
-locker_num_bays     = 3;
-locker_bay_width    = 15;   // Interior width of each bay
+locker_num_bays     = 4;    // 4 bays for 4 kids
+locker_bay_width    = 11;   // Interior width of each bay (backpacks hang sideways)
 locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
 locker_upper_height = 12;   // Height of top cubby bins (12" from the top)
+locker_shoe_height  = 8;    // Under-bench shoe shelf spacing
 
 // --- Bench Parameters (Inches) ---
 bench_depth  = 18;
@@ -339,14 +340,20 @@ module mudroom_lockers() {
                 cube([plywood_thickness, locker_depth - 0.5, cubby_interior_height]);
         }
         
-        // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf)
+        // 7. Coat hooks (side-mounted on the walls of each locker bay, 6" below the cubby shelf)
         hook_z = locker_height - base_platform_height - locker_upper_height - plywood_thickness - 6;
         for (i = [0 : locker_num_bays - 1]) {
-            x_center = i * (locker_bay_width + plywood_thickness) + plywood_thickness + locker_bay_width / 2;
+            left_wall_x = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
+            right_wall_x = (i + 1) * (locker_bay_width + plywood_thickness);
             
-            translate([x_center - locker_bay_width / 4, 0.75, hook_z])
+            // Left hook (mounted on left wall, extending +X)
+            translate([left_wall_x, locker_depth / 2, hook_z])
+                rotate([0, 0, -90])
                 draw_hook();
-            translate([x_center + locker_bay_width / 4, 0.75, hook_z])
+                
+            // Right hook (mounted on right wall, extending -X)
+            translate([right_wall_x, locker_depth / 2, hook_z])
+                rotate([0, 0, 90])
                 draw_hook();
         }
     }
