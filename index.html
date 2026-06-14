@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mudroom Built-in Organizer: Build Specification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fbfbfa;
+            --text-color: #2c3531;
+            --primary-color: #152c16; /* Cabinet Forest Green */
+            --accent-color: #d4a373;  /* Natural Honey Wood */
+            --border-color: #e5e5e0;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --tip-bg: #eaf4ec;
+            --tip-border: #8ec399;
+            --warning-bg: #fdf2e9;
+            --warning-border: #f5b041;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin: 0 0 12px 0;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: #606c38;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin-top: 48px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            margin: 0 0 16px 0;
+            font-weight: 400;
+            color: #4a4a4a;
+        }
+
+        /* Image Display Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin: 24px 0;
+        }
+
+        .image-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .image-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-caption {
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            color: #555;
+            background-color: #fafaf9;
+            border-top: 1px solid var(--border-color);
+            margin: 0;
+            font-style: italic;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 0 0 24px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #4a4a4a;
+        }
+
+        li strong {
+            color: var(--primary-color);
+        }
+
+        /* ASCII Code Block */
+        pre {
+            background-color: #2b2b2b;
+            color: #a9b7c6;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-important {
+            background-color: var(--warning-bg);
+            border-left: 4px solid var(--warning-border);
+            color: #7e5109;
+        }
+
+        .alert-tip {
+            background-color: var(--tip-bg);
+            border-left: 4px solid var(--tip-border);
+            color: #1e4620;
+        }
+
+        .alert-caution {
+            background-color: #fbeee9;
+            border-left: 4px solid #e74c3c;
+            color: #78281f;
+        }
+
+        .step-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .step-title {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary-color);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mudroom Built-in Organizer</h1>
+        <p class="subtitle">Complete Construction Document &amp; Build Specification</p>
+    </header>
+
+    <h2>1. Visual Overview (OpenSCAD Renderings)</h2>
+    <p>Here are the 3D visual renderings exported directly from your OpenSCAD model. Use these as a visual reference during assembly:</p>
+
+    <div class="image-grid">
+        <div class="image-card">
+            <img src="./mudroom_angled_view.png" alt="Mudroom Layout Overview">
+            <p class="image-caption">Figure 1: Angled Overview showing forest green cabinet bases, natural honey butcher block benchtops, dark charcoal baskets, and metallic bronze hooks.</p>
+        </div>
+        <div class="image-card">
+            <img src="./mudroom_lockers_detail.png" alt="Lockers Close-up Detail">
+            <p class="image-caption">Figure 2: Close-up of the 4 locker bays showing the beadboard backing, child-height hooks (50" off floor), and individual baskets.</p>
+        </div>
+    </div>
+
+    <h2>2. Spatial Layout &amp; Dimensions (Measured from East Wall Corner)</h2>
+    <p>For ease of measurement during construction, all layout coordinates below are measured <strong>Westward from the East Wall corner (0")</strong>:</p>
+
+<pre>
+[West Wall]       &lt;-- Measuring out from East Wall Corner (0") &lt;--       [East Wall]
++----------------------------------------------------------------------------------+
+| 108"           89"                     53"                              0"       |
+| Open Walkway    | Door Opening (36" W)  | Clear Space (53" total)                |
+| (19" space)     |                       | - North Bench Base (0" to 49")         |
+|                 |                       | - Gap to Trim: 4"                      |
++----------------------------------------------------------------------------------+
+                                                                         |
+                                                                         | East Wall (71")
+                                                                         | - North Bench:  53" to 71"
+                                                                         | - East Bench:   18" to 53"
+                                                                         | - Locker Bench:  0" to 18"
+                                                                         v
++----------------------------------------------------------------------------------+
+| 108"           86"                     50"                              0"       |
+| Solid Wall      | Open Walkway (36" W)  | Clear Space (50" total)                |
+| (22" space for  |                       | - Locker Base (0" to 44.75")           |
+|  drop zone)     |                       | - Gap to Trim: 5.25"                   |
++----------------------------------------------------------------------------------+
+</pre>
+
+    <h3>Critical Specifications:</h3>
+    <ul>
+        <li><strong>Bench Height:</strong> <code>18.0"</code> off the floor (with a <code>3.5"</code> toe kick, <code>13"</code> carcass, and <code>1.5"</code> solid wood top).</li>
+        <li><strong>Locker Height:</strong> <code>90.0"</code> total height (ends exactly <code>6"</code> below the window trim).</li>
+        <li><strong>Locker Depth:</strong> <code>18.0"</code> (outer box dimension).</li>
+        <li><strong>Locker Bay Width:</strong> <code>10.25"</code> interior width in each of the 4 individual bays.</li>
+        <li><strong>Hook Height:</strong> <code>50.0"</code> off the floor (perfect reaching height for kids).</li>
+        <li><strong>Backing Panel:</strong> <code>1/4"</code> thick beadboard backing sheet.</li>
+    </ul>
+
+    <h2>3. Material &amp; Shopping List</h2>
+
+    <div class="alert alert-important">
+        <div class="alert-title">⚠️ Acclimation Required</div>
+        Before cutting or building, let the butcher block slabs acclimate inside your house for at least 48 hours to prevent warping or checking once cut.
+    </div>
+
+    <h3>Butcher Block (For Benchtops)</h3>
+    <p>Buy standard 25" deep, 1.5" thick unfinished butcher block slabs (Birch or Maple):</p>
+    <ul>
+        <li><strong>1x 98" (8-foot) Slab:</strong> Ripped to 18.5" depth, cut into a <code>49.0"</code> piece (North bench) and a <code>44.75"</code> piece (South locker bench).</li>
+        <li><strong>1x 50" (4-foot) Slab:</strong> Ripped to 18.0" depth, cut into a <code>35.0"</code> piece (East bench).</li>
+    </ul>
+
+    <h3>Sheet Goods &amp; Lumber</h3>
+    <ul>
+        <li><strong>3x Sheets of 3/4" Veneer-Core Birch Plywood:</strong> For all carcasses, partitions, bottom shelves, and dividers.</li>
+        <li><strong>1x Sheet of 1/4" Beadboard Plywood Panel:</strong> For the locker backing panel.</li>
+        <li><strong>6x 8-foot 2x4 Framing Lumber:</strong> For building the toe kick platform bases.</li>
+    </ul>
+
+    <h3>Trim, Finishing &amp; Hardware</h3>
+    <ul>
+        <li><strong>Solid Birch Trim (1/4" x 3/4" strips):</strong> For gluing and nail-fastening onto exposed plywood front edges.</li>
+        <li><strong>8x Double Coat Hooks:</strong> Warm metallic bronze finish.</li>
+        <li><strong>Charcoal Grey Felt/Canvas Baskets:</strong>
+            <ul>
+                <li><strong>4x Top Baskets:</strong> <code>9.25" W x 17" D x 10" H</code> (Locker top cubbies)</li>
+                <li><strong>4x Seat Baskets:</strong> <code>9.25" W x 17" D x 8" H</code> (Locker bench seat)</li>
+                <li><strong>2x Lower Locker Baskets:</strong> <code>11.0" W x 17" D x 10" H</code> (Locker base)</li>
+                <li><strong>2x North Bench Baskets:</strong> <code>13.0" W x 17" D x 10" H</code> (North bench)</li>
+                <li><strong>3x East Bench Baskets:</strong> <code>9.5" W x 17" D x 10" H</code> (East bench)</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>4. Step-by-Step Build Plan</h2>
+
+    <div class="step-section">
+        <div class="step-title">Phase 1: Shop Preparation (Off-Site)</div>
+        <ol>
+            <li><strong>Cut Plywood:</strong> Rip all carcass side panels to exactly <code>18.0"</code> wide. Cut all vertical dividers and bottom shelves to length.</li>
+            <li><strong>Edge Banding:</strong> Glue and nail the solid wood trim onto all exposed front edges of the plywood. Sand flush.</li>
+            <li><strong>Assemble Lower Cabinets:</strong> Assemble the South Locker base carcass and the North Bench base carcass. <em>Do not cut or build the East Bench carcass yet.</em></li>
+            <li><strong>Finishing:</strong> Sand all carcasses to 220-grit. Prime with shellac-based primer (Zinsser BIN) and paint them dark forest green. Stain and seal the butcher block benchtops with 4 coats of polyurethane.</li>
+        </ol>
+    </div>
+
+    <div class="step-section">
+        <div class="step-title">Phase 2: Platform Installation (In the Mudroom)</div>
+        <ol>
+            <li><strong>Build 2x4 Frames:</strong> Assemble the three toe kick frames with screws.</li>
+            <li><strong>Level &amp; Shim:</strong> Lay the frames in position and shim them from the floor until the top edges are 100% level.</li>
+            <li><strong>Anchor:</strong> Screw the leveled 2x4 frames into the wall studs and subfloor.</li>
+        </ol>
+    </div>
+
+    <div class="step-section">
+        <div class="step-title">Phase 3: Base Carcass Installation</div>
+        <ol>
+            <li><strong>Install North and Locker Bases:</strong> Place the pre-built Locker base and North Bench base onto the platforms, align them, and screw them into the wall studs.</li>
+            <li><strong>Measure &amp; Cut East Bench:</strong> Measure the exact real-world distance between the installed North Bench and Locker base boxes. Cut the East Bench shelf and dividers to this size in the shop, assemble, and slide it in.</li>
+            <li><strong>Install Corner Post:</strong> Install the 2x2 or L-shaped support pillar in the open corner to support the joint.</li>
+        </ol>
+    </div>
+
+    <div class="step-section">
+        <div class="step-title">Phase 4: Scribe &amp; Mount Benchtops</div>
+        <ol>
+            <li><strong>Scribe to Walls:</strong> Place the finished butcher block slabs on the bases. Scribe the back edges to match the wall curvature.</li>
+            <li><strong>Cut Seams:</strong> Cut the pieces to final length, trimming the 90° butt joint where the East and South benches meet the North bench.</li>
+            <li><strong>Mount:</strong> Drive pocket screws from the underside of the cabinet carcasses up into the butcher block.</li>
+        </ol>
+    </div>
+
+    <div class="step-section">
+        <div class="step-title">Phase 5: Assemble and Install Uppers</div>
+        <ol>
+            <li><strong>Build Locker Frame:</strong> Assemble the locker dividers and upper cubby shelves to the beadboard back panel in the shop.</li>
+            <li><strong>Mount Upper Box:</strong> Lift the upper locker frame onto the benchtop. Secure it by screwing through the beadboard back into the wall studs, and running screws up through the underside of the benchtop.</li>
+            <li><strong>Hooks &amp; Baskets:</strong> Screw in the bronze hooks and slide all the charcoal baskets into place.</li>
+        </ol>
+    </div>
+
+    <h2>5. Pro Carpentry Tips &amp; Tricks</h2>
+
+    <div class="alert alert-tip">
+        <div class="alert-title">💡 The Back-Bevel Scribe Trick</div>
+        When jigsawing your scribed lines on the 1.5" butcher block, tilt the jigsaw blade 5° to 10° inward. This removes the wood bulk underneath, leaving a thin edge at the top. This makes it incredibly easy to quickly sand down the wood to meet the wall perfectly.
+    </div>
+
+    <div class="alert alert-caution">
+        <div class="alert-title">⚠️ Prevent Paint Sticking (Blocking)</div>
+        Urethane acrylic cabinet paint takes 7 to 14 days to fully cure to maximum hardness. Avoid sliding the heavy charcoal baskets onto the painted shelves for at least a week, or apply small felt pads to the underside of the baskets to prevent them from sticking and tearing off the green paint.
+    </div>
+</div>
+
+<footer>
+    <p>Custom Mudroom Cabinet Spec &bull; Built in OpenSCAD &bull; 2026</p>
+</footer>
+
+</body>
+</html>
