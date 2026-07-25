@@ -17,8 +17,9 @@ plywood_thickness   = 0.75; // Standard cabinet carcass material
 bench_top_thickness = 1.5;  // Premium thick wood top for benches
 
 // --- Base Platform / Toe Kick Parameters (Inches) ---
-base_platform_height = 3.5; // Nominally 2x4 height
-toe_kick_recess      = 2.5; // Recession from the cabinet front face
+base_platform_height = 3.5; // 3.5 inch tall baseboard height
+baseboard_thickness  = 0.5; // Square'ish craftsman baseboard thickness
+toe_kick_recess      = 2.5; // 2.5 inch recession for comfortable toe space when standing/sitting
 
 // --- North Door Parameters (Inches) ---
 north_door_from_east    = 53;
@@ -89,6 +90,8 @@ show_benches     = true;  // Renders the North & East wall L-shaped benches
 show_platforms   = true;  // Renders the 2x4 base platforms
 show_glass       = false; // Set to false to hide glass panes if preview transparency blocks your view
 show_baskets     = true;  // Renders woven rattan baskets inside the cubbies
+show_arched_valances = true; // Renders decorative soft arched top valance headers
+show_baseboard_wrap  = true; // Renders 3.5" green craftsman baseboard wrap on toe kick
 
 // --- Colors ---
 color_wall         = [0.93, 0.93, 0.90, 1.0]; // Warm off-white
@@ -332,28 +335,86 @@ module beadboard_backing(w, h, t) {
     }
 }
 
+// Reusable Arched Valance Panel Component
+module arched_valance(w, h, depth, drop) {
+    color(color_cabinet)
+    difference() {
+        // Main rectangular header board
+        cube([w, depth, h]);
+        
+        // Elliptical arch cutout centered at bottom front edge
+        translate([w / 2, -0.1, 0])
+            rotate([-90, 0, 0])
+                scale([1, drop / (w / 2), 1])
+                    cylinder(r = w / 2, h = depth + 0.2, $fn = 40);
+    }
+}
+
+// Reusable Modern Craftsman Square 3.5" Baseboard Trim Component
+module craftsman_baseboard(length, height = 3.5, thickness = 0.5, chamfer = 0.15) {
+    color(color_cabinet)
+    difference() {
+        // Main flat baseboard board
+        cube([length, thickness, height]);
+        
+        // Subtle 45-degree top-front chamfer/bevel edge for modern craftsman look
+        translate([-0.1, thickness - chamfer, height - chamfer])
+            rotate([45, 0, 0])
+                cube([length + 0.2, thickness * 2, thickness * 2]);
+    }
+}
+
 module room_base_platforms() {
     total_locker_width = locker_num_bays * locker_bay_width + (locker_num_bays + 1) * plywood_thickness;
 
-    // 1. Locker Platform (South-East corner, recessed from front Y=18)
-    if (show_south_wall) {
+    // 1. Locker Platform Framing (South-East corner)
+    if (show_lockers) {
         color(color_platform)
         translate([north_wall_length - total_locker_width, 0, 0])
             cube([total_locker_width, locker_depth - toe_kick_recess, base_platform_height]);
+            
+        // Green Craftsman Baseboard Wrap on Lockers
+        if (show_baseboard_wrap) {
+            // Front facing baseboard
+            translate([north_wall_length - total_locker_width, locker_depth - toe_kick_recess, 0])
+                craftsman_baseboard(total_locker_width, base_platform_height, baseboard_thickness);
+                
+            // Left exposed side baseboard return
+            translate([north_wall_length - total_locker_width - baseboard_thickness, 0, 0])
+                rotate([0, 0, 90])
+                craftsman_baseboard(locker_depth - toe_kick_recess + baseboard_thickness, base_platform_height, baseboard_thickness);
+        }
     }
 
-    // 2. North Bench Platform (North-East wall, recessed from front Y=53)
-    if (show_north_wall) {
+    // 2. North Bench Platform (North-East wall)
+    if (show_benches) {
         color(color_platform)
         translate([59, east_wall_length - bench_depth + toe_kick_recess, 0])
             cube([49, bench_depth - toe_kick_recess, base_platform_height]);
+            
+        if (show_baseboard_wrap) {
+            // Front baseboard facing South (Y-minus)
+            translate([59, east_wall_length - bench_depth + toe_kick_recess - baseboard_thickness, 0])
+                craftsman_baseboard(49, base_platform_height, baseboard_thickness);
+                
+            // Left exposed side baseboard return facing West (X-minus)
+            translate([59 - baseboard_thickness, east_wall_length - bench_depth + toe_kick_recess - baseboard_thickness, 0])
+                rotate([0, 0, 90])
+                craftsman_baseboard(bench_depth - toe_kick_recess + baseboard_thickness, base_platform_height, baseboard_thickness);
+        }
     }
 
-    // 3. East Bench Platform (East wall, recessed from front X=90)
-    if (show_east_wall) {
+    // 3. East Bench Platform (East wall)
+    if (show_benches) {
         color(color_platform)
         translate([north_wall_length - bench_depth + toe_kick_recess, 18, 0])
             cube([bench_depth - toe_kick_recess, 35, base_platform_height]);
+            
+        if (show_baseboard_wrap) {
+            translate([north_wall_length - bench_depth + toe_kick_recess - baseboard_thickness, 18, 0])
+                rotate([0, 0, 90])
+                craftsman_baseboard(35, base_platform_height, baseboard_thickness);
+        }
     }
 }
 
@@ -428,6 +489,29 @@ module mudroom_lockers() {
             translate([right_wall_x, locker_depth / 2, hook_z])
                 rotate([0, 0, 90])
                 draw_hook();
+        }
+        
+        // 7.5. Soft Arched Valances (if toggled on)
+        if (show_arched_valances) {
+            // Upper Cubby Arched Valances
+            valance_h = 3.5;    // Height of upper valance header panel
+            valance_drop = 2.25; // Arch curve rise
+            for (i = [0 : locker_num_bays - 1]) {
+                x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
+                // Positioned at top of cubbies, flush with front carcass face Y = locker_depth - plywood_thickness
+                translate([x_pos, locker_depth - plywood_thickness, locker_height - base_platform_height - plywood_thickness - valance_h])
+                    arched_valance(locker_bay_width, valance_h, plywood_thickness, valance_drop);
+            }
+            
+            // Main Locker Hook Bay Arched Valances
+            main_valance_h = 4.0;
+            main_valance_drop = 2.5;
+            for (i = [0 : locker_num_bays - 1]) {
+                x_pos = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
+                // Positioned below upper cubby shelf
+                translate([x_pos, locker_depth - plywood_thickness, locker_height - base_platform_height - locker_upper_height - plywood_thickness - main_valance_h])
+                    arched_valance(locker_bay_width, main_valance_h, plywood_thickness, main_valance_drop);
+            }
         }
         
         // 8. Baskets (if toggled on)
