@@ -69,11 +69,12 @@ locker_depth        = 18;
 locker_height       = 90;   // 6 inches below window trim (96")
 locker_bench_height = 18;
 locker_upper_height = 12;   // Height of top cubby bins (12" from the top)
-locker_hook_height  = 50;   // Height of hooks from the floor (lower for kids)
+locker_hook_height  = 56;   // Height of hooks from the floor (56" leaves 28"+ clearance above 8" seat baskets)
 
 // --- Bench Parameters (Inches) ---
-bench_depth  = 18;
-bench_height = 18;
+bench_depth    = 18;
+bench_height   = 18;
+bench_overhang = 0.5; // Uniform 0.5" front nosing overhang on all benchtops
 
 // --- Visualization Toggles ---
 show_north_wall  = false; // Set to false to hide North wall and see interior easily
@@ -252,6 +253,48 @@ module door_unit(wall_y, is_north, door_from_east, width, height, thickness, swi
                 translate([box_x, box_y, 0])
                     cube([width, width, 0.03]);
             }
+        }
+    }
+}
+
+module room_doors() {
+    if (show_doors) {
+        // North Door
+        if (show_north_wall) {
+            door_unit(
+                wall_y          = east_wall_length,
+                is_north        = true,
+                door_from_east  = north_door_from_east,
+                width           = north_door_width,
+                height          = north_door_height,
+                thickness       = north_door_thickness,
+                swing_angle     = north_door_swing_angle,
+                hinge_east      = north_door_hinge_east,
+                opens_inward    = north_door_opens_inward,
+                trim_width      = north_door_trim_width,
+                trim_thick      = north_door_trim_thick,
+                show_slab       = show_doors,
+                show_swing      = show_door_swing
+            );
+        }
+        
+        // South Door
+        if (show_south_wall) {
+            door_unit(
+                wall_y          = 0,
+                is_north        = false,
+                door_from_east  = south_door_from_east,
+                width           = south_door_width,
+                height          = south_door_height,
+                thickness       = south_door_thickness,
+                swing_angle     = south_door_swing_angle,
+                hinge_east      = south_door_hinge_east,
+                opens_inward    = south_door_opens_inward,
+                trim_width      = south_door_trim_width,
+                trim_thick      = south_door_trim_thick,
+                show_slab       = show_doors,
+                show_swing      = show_door_swing
+            );
         }
     }
 }
@@ -445,11 +488,11 @@ module mudroom_lockers() {
         translate([0, backing_thickness, locker_height - base_platform_height - locker_upper_height - plywood_thickness])
             cube([total_locker_width, locker_depth - backing_thickness - 0.5, plywood_thickness]);
             
-        // 4. Stained solid wood bench top (1.5" thick with 0.5" overhang in Y, positioned at world Z = 18")
+        // 4. Stained solid wood bench top (1.5" thick with uniform 0.5" overhang, positioned at world Z = 18")
         // Overlap covering the backing panel top edge
         color(color_bench_top)
         translate([0, 0, locker_bench_height - base_platform_height - bench_top_thickness])
-            cube([total_locker_width, locker_depth + 0.5, bench_top_thickness]);
+            cube([total_locker_width, locker_depth + bench_overhang, bench_top_thickness]);
             
         // 5. Lower cabinet bottom shelf (resting directly on the 2x4 platform)
         color(color_cabinet)
@@ -474,19 +517,19 @@ module mudroom_lockers() {
         translate([total_locker_width - plywood_thickness, backing_thickness, plywood_thickness])
             cube([plywood_thickness, locker_depth - backing_thickness, support_h]);
         
-        // 7. Coat hooks (2 per locker bay, 6" below the cubby shelf, mounted on beadboard backing)
+        // 7. Coat hooks (2 per locker bay, staggered in depth and height to prevent clashing)
         hook_z = locker_hook_height - base_platform_height;
         for (i = [0 : locker_num_bays - 1]) {
             left_wall_x = i * (locker_bay_width + plywood_thickness) + plywood_thickness;
             right_wall_x = (i + 1) * (locker_bay_width + plywood_thickness);
             
-            // Left hook (mounted on left wall, extending +X)
-            translate([left_wall_x, locker_depth / 2, hook_z])
+            // Left hook (mounted on left wall, set forward, slightly higher)
+            translate([left_wall_x, locker_depth * 0.62, hook_z + 1.5])
                 rotate([0, 0, -90])
                 draw_hook();
                 
-            // Right hook (mounted on right wall, extending -X)
-            translate([right_wall_x, locker_depth / 2, hook_z])
+            // Right hook (mounted on right wall, set back, slightly lower)
+            translate([right_wall_x, locker_depth * 0.38, hook_z - 1.5])
                 rotate([0, 0, 90])
                 draw_hook();
         }
@@ -563,10 +606,10 @@ module mudroom_benches() {
     y_pos_2 = 18 + 2 * east_bay_w + 1.5 * plywood_thickness;
 
     // 1. North Wall Bench (X: 59 to 108, Y: 53 to 71)
-    // Wood bench top (butts into East wall corner at world Z = 18")
+    // Wood bench top (butts into East wall corner at world Z = 18", with 0.5" front overhang)
     color(color_bench_top)
-    translate([59, east_wall_length - bench_depth, bench_height - bench_top_thickness])
-        cube([49, bench_depth, bench_top_thickness]);
+    translate([59, east_wall_length - bench_depth - bench_overhang, bench_height - bench_top_thickness])
+        cube([49, bench_depth + bench_overhang, bench_top_thickness]);
         
     // North bench carcass (rests on base platform at Z = base_platform_height)
     color(color_cabinet) {
@@ -585,10 +628,13 @@ module mudroom_benches() {
     }
     
     // 2. East Wall Bench (X: 90 to 108, Y: 18 to 53)
-    // Wood bench top
+    // Wood bench top (fits precisely between South locker bench top and North bench top with uniform 0.5" overhang)
+    east_top_y_start = locker_depth + bench_overhang;                          // 18.5"
+    east_top_y_end   = east_wall_length - bench_depth - bench_overhang;         // 52.5"
+    east_top_length  = east_top_y_end - east_top_y_start;                      // 34.0" (zero collision)
     color(color_bench_top)
-    translate([north_wall_length - bench_depth, 18, bench_height - bench_top_thickness])
-        cube([bench_depth, 35, bench_top_thickness]);
+    translate([north_wall_length - bench_depth - bench_overhang, east_top_y_start, bench_height - bench_top_thickness])
+        cube([bench_depth + bench_overhang, east_top_length, bench_top_thickness]);
         
     // East bench carcass (rests on platform)
     color(color_cabinet) {
@@ -665,6 +711,7 @@ scale(inch) {
     // Platforms
     if (show_platforms) room_base_platforms();
     
+    room_doors();
     room_windows();
     
     // Lockers
